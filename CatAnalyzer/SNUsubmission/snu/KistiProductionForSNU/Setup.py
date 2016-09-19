@@ -10,8 +10,8 @@ RunALLSamples=True
 PrivateSample=False
 
 ####### For now keep these the same  #########
-copy_cluster=True
-copy_cms1=False
+copy_cluster=False
+copy_cms1=True
 ##############################################
 #RunALLSamples=False
 #PrivateSample=True
@@ -21,7 +21,7 @@ copy_cms1=False
 KeepWorkDir=False
 
 #### WHAT VERSION OF CATUPLES ARE YOU RUNNING 
-version = "v8-0-0"
+version = "v8-0-1"
 
 
 #### For data only:
@@ -42,7 +42,7 @@ if RunALLSamples:
 
 ### Set ouput directory at kisti
 cmssw_dir=os.getenv("CMSSW_BASE")
-kisti_output_default=cmssw_dir+"/src/CATTools/CommonTools/test/snu/KistiProductionForSNU/"+version+"/"
+kisti_output_default=cmssw_dir+"/src/CATTools/CatAnalyzer/SNUsubmission/snu/KistiProductionForSNU/"+version+"/"
 
 
 ### Set if you are running full production on kisti site to transfer to snu                                                                                                                                                                  
@@ -54,7 +54,7 @@ username_snu=os.getenv("USER")
 ##########################################
 host=os.getenv("HOSTNAME")
 k_user=os.getenv("USER") 
-latest_version="v8-0-0"
+latest_version="v8-0-1"
 
 if version != latest_version:
     update = raw_input("You requested to run on old version of catuples. " + latest_version + " is the latest version while you are running on " + version + ". To continue type Y")
@@ -67,7 +67,7 @@ def updateinput(datasetpath, datasetfile, version):
     os.system('scp ' + datasetpath + ' ' + username_snu + '@cms3.snu.ac.kr:~/')
     os.system('scp  sendmail.sh  ' + username_snu + '@cms3.snu.ac.kr:~/')
     print "ssh " + username_snu+ "@cms3.snu.ac.kr 'source sendmail.sh'"
-    currentdir=cmssw_dir+"/src/CATTools/CommonTools/test/snu/KistiProductionForSNU/"
+    currentdir=cmssw_dir+"/src/CATTools/CatAnalyzer/SNUsubmission/snu/KistiProductionForSNU/"
     forcesend = open(currentdir+"forcesend.sh","w")
     forcesend.write("ssh " + username_snu+ "@cms3.snu.ac.kr 'source sendmail.sh' \n")
     forcesend.write("ssh " + username_snu+ "@cms3.snu.ac.kr 'rm " + datasetfile+ "'\n")

@@ -23,6 +23,9 @@
 #include "CommonTools/Utils/interface/StringObjectFunction.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 
+#include "CATTools/CommonTools/interface/AnalysisHelper.h"
+
+
 #include "CATTools/DataFormats/interface/MET.h"
 #include "CATTools/DataFormats/interface/Muon.h"
 #include "CATTools/DataFormats/interface/Jet.h"
@@ -36,7 +39,8 @@
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 
-
+#include "CATTools/CatAnalyzer/src/rochcor2016.h"
+#include "CATTools/CatAnalyzer/src/RoccoR.h"
 
 
 #include "TTree.h"
@@ -52,6 +56,8 @@
 
 using namespace std;
 using namespace edm;
+using namespace cat;
+
 
 typedef std::vector<float> vfloat;
 
@@ -261,6 +267,7 @@ private:
   typedef edm::EDGetTokenT<Vmap> VmapToken;
   
   edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
+  edm::EDGetTokenT<edm::TriggerResults> triggerBits2_;
   edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
   edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescales_;
   edm::EDGetTokenT<edm::TriggerResults> metFilterBitsPAT_;
@@ -337,6 +344,7 @@ private:
   std::vector<double>  muon_x,muon_y,muon_z, muon_relIso03,muon_relIso04, muon_dxy,muon_sigdxy, muon_normchi, muon_dz, muon_shiftedEup,muon_shiftedEdown;
   
   std::vector<double> muon_pt, muon_eta,muon_phi, muon_m, muon_energy;
+  std::vector<double> muon_roch_pt, muon_roch_eta,muon_roch_phi, muon_roch_m, muon_roch_energy;
 
   //// electrons  26
   std::vector<double>   electrons_x,electrons_y,electrons_z, electrons_relIso03,electrons_relIso04,electrons_shiftedEnDown, electrons_shiftedEnUp, electrons_absIso03, electrons_absIso04,electrons_chIso03, electrons_nhIso03, electrons_phIso03, electrons_puChIso03, electrons_chIso04, electrons_nhIso04, electrons_phIso04, electrons_puChIso04, electrons_scEta, electrons_dxy,electrons_sigdxy, electrons_dz, electrons_isGsfCtfScPixChargeConsistent;
@@ -348,7 +356,7 @@ private:
 
   std::vector<double> jets_pt, jets_eta,jets_phi, jets_m, jets_energy;
   
-  bool Flag_HBHENoiseFilter, Flag_CSCTightHaloFilter, Flag_goodVertices, Flag_eeBadScFilter, Flag_EcalDeadCellTriggerPrimitiveFilter;
+  bool Flag_HBHENoiseIsoFilter, Flag_HBHENoiseFilter, Flag_CSCTightHaloFilter, Flag_goodVertices, Flag_eeBadScFilter, Flag_EcalDeadCellTriggerPrimitiveFilter,  Flag_globalTightHalo2016Filter;
 
   double met_muonEn_Px_up, met_muonEn_Px_down, met_muonEn_Py_up, met_muonEn_Py_down;
   double met_electronEn_Px_up, met_electronEn_Px_down, met_electronEn_Py_up, met_electronEn_Py_down;
@@ -394,6 +402,8 @@ private:
   int genWeight_id2_;
   float genWeight_;
   float lheWeight_;
+
+  rochcor2016 *rmcor;
 
 
   edm::EDGetTokenT<cat::METCollection>      metToken_;
@@ -461,6 +471,7 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
   genjet_    =consumes<reco::GenJetCollection>(pset.getParameter<edm::InputTag>("genjet"));
   mcLabel_   = consumes<reco::GenParticleCollection>(pset.getParameter<edm::InputTag>("genLabel"));
   triggerBits_ = consumes<edm::TriggerResults>(pset.getParameter<edm::InputTag>("triggerBits"));
+  triggerBits2_ = consumes<edm::TriggerResults>(pset.getParameter<edm::InputTag>("triggerBits2"));
   triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(pset.getParameter<edm::InputTag>("triggerObjects"));
   triggerPrescales_ =consumes<pat::PackedTriggerPrescales>(pset.getParameter<edm::InputTag>("triggerPrescales"));
   metToken_  = consumes<cat::METCollection>(pset.getParameter<edm::InputTag>("met"));
@@ -515,11 +526,12 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
 
   tree_->Branch("IsData", &IsData_ , "IsData/O");
   tree_->Branch("HBHENoiseFilter", &Flag_HBHENoiseFilter , "HBHENoiseFilter/O");
+  tree_->Branch("HBHENoiseIsoFilter", &Flag_HBHENoiseIsoFilter , "HBHENoiseIsoFilter/O");
   tree_->Branch("CSCTightHaloFilter", &Flag_CSCTightHaloFilter, "CSCTightHaloFilter/O");
   tree_->Branch("goodVertices", &Flag_goodVertices,"goodVertices/O");
   tree_->Branch("eeBadScFilter", &Flag_eeBadScFilter,"eeBadScFilter/O");
   tree_->Branch("EcalDeadCellTriggerPrimitiveFilter", &Flag_EcalDeadCellTriggerPrimitiveFilter,"EcalDeadCellTriggerPrimitiveFilter/O");
-
+  tree_->Branch("Flag_globalTightHalo2016Filter",&Flag_globalTightHalo2016Filter,"Flag_globalTightHalo2016Filter/O");
   
   tree_->Branch("genWeightQ", &genWeightQ_, "genWeightQ/F");
   tree_->Branch("genWeightX1", &genWeightX1_,"genWeightX1/F");
@@ -617,6 +629,12 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
   tree_->Branch("muon_phi",  "std::vector<double>", &muon_phi);
   tree_->Branch("muon_m",  "std::vector<double>", &muon_m);
   tree_->Branch("muon_energy",  "std::vector<double>", &muon_energy);
+
+  tree_->Branch("muon_roch_pt",  "std::vector<double>", &muon_roch_pt);
+  tree_->Branch("muon_roch_eta",  "std::vector<double>", &muon_roch_eta);
+  tree_->Branch("muon_roch_phi",  "std::vector<double>", &muon_roch_phi);
+  tree_->Branch("muon_roch_m",  "std::vector<double>", &muon_roch_m);
+  tree_->Branch("muon_roch_energy",  "std::vector<double>", &muon_roch_energy);
   tree_->Branch("muon_dxy",  "std::vector<double>", &muon_dxy);
   tree_->Branch("muon_sigdxy",  "std::vector<double>", &muon_sigdxy);
   tree_->Branch("muon_dz",  "std::vector<double>", &muon_dz);
@@ -879,6 +897,9 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   typedef edm::View<reco::LeafCandidate> Cands;
   
   int nFailure = 0;
+
+  rmcor = new rochcor2016();  
+
   
   //// In case config is wrong set false for data
   if(event.isRealData()) store_allweights=false;
@@ -939,8 +960,15 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
   edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
 
-  event.getByToken(triggerBits_, triggerBits);
+  if (! event.getByToken(triggerBits2_, triggerBits)){
+    event.getByToken(triggerBits_, triggerBits);
+  }
   event.getByToken(triggerObjects_, triggerObjects);
+
+  //const edm::TriggerNames &triggerNames = event.triggerNames(*triggerBits);
+  //AnalysisHelper trigHelper = AnalysisHelper(triggerNames, triggerBits, triggerObjects);
+
+  //event.getByToken(triggerObjects_, triggerObjects);
   event.getByToken(triggerPrescales_, triggerPrescales);
 
 
@@ -1001,11 +1029,10 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
       }
     }
   }
-
-  
-
   std::vector<string> vtrignames_tomatch_muon;
   vtrignames_tomatch_muon.push_back("HLT_IsoMu24_eta2p1_v");
+  vtrignames_tomatch_muon.push_back("HLT_Ele25_WPTight_Gsf_v");
+  vtrignames_tomatch_muon.push_back("HLT_Ele27_WPTight_Gsf_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu17_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu20_v");
   vtrignames_tomatch_muon.push_back("HLT_TkMu20_v");
@@ -1017,6 +1044,9 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   vtrignames_tomatch_muon.push_back("HLT_Mu24_TrkIsoVVL_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu27_v");
   vtrignames_tomatch_muon.push_back("HLT_IsoMu20_v");
+  vtrignames_tomatch_muon.push_back("HLT_IsoTkMu20_v");
+  vtrignames_tomatch_muon.push_back("HLT_IsoMu22_v");
+  vtrignames_tomatch_muon.push_back("HLT_IsoTkMu22_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu17_Mu8_DZ_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu17_TkMu8_DZ_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v");
@@ -1030,6 +1060,10 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   vtrignames_tomatch_muon.push_back("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v");
   vtrignames_tomatch_muon.push_back("HLT_TripleMu_12_10_5_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v");
+  vtrignames_tomatch_muon.push_back("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v");
+  vtrignames_tomatch_muon.push_back("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v");
+
+
   std::vector<string> vtrignames_tomatch_electron;
   vtrignames_tomatch_electron.push_back("HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v");
   vtrignames_tomatch_electron.push_back("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v");
@@ -1041,7 +1075,8 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   vtrignames_tomatch_electron.push_back("HLT_Ele27_eta2p1_WPLoose_Gsf_TriCentralPFJet30_v");
   vtrignames_tomatch_electron.push_back("HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v");
   vtrignames_tomatch_electron.push_back("HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v");
-
+  vtrignames_tomatch_electron.push_back("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v");
+  vtrignames_tomatch_electron.push_back("HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v");
   //vtrignames_tomatch_muon.push_back(CatVersion_);  
 
   ////////// Fill MET/Muon/Electron variables
@@ -1119,10 +1154,29 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     
   }
   
+
   
   for (auto mu : *muons) {
+
+    cat::Muon cat_mu(mu);
+
     if(mu.pt() < mu_pt_min) continue;
     if(fabs(mu.eta()) > mu_eta_max) continue;
+
+    TLorentzVector tmu(cat_mu.tlv());
+    float qter = 1.0;
+    
+    if (!event.isRealData())       rmcor->momcor_mc(tmu, cat_mu.charge(), cat_mu.trackerLayersWithMeasurement(), qter);
+    else       rmcor->momcor_data(tmu, cat_mu.charge(), 0, qter);
+    
+    cat_mu.setP4(mu.p4() * tmu.E()/cat_mu.tlv().E());
+    
+    muon_roch_pt.push_back(cat_mu.pt());
+    muon_roch_eta.push_back(cat_mu.eta());
+    muon_roch_phi.push_back(cat_mu.phi());
+    muon_roch_m.push_back(cat_mu.mass());
+    muon_roch_energy.push_back(cat_mu.energy());
+
     muon_isTrackerMuon.push_back(mu.isTrackerMuon());
     muon_isGlobalMuon.push_back(mu.isGlobalMuon()); 
     muon_isLooseMuon.push_back(mu.isLooseMuon()); 
@@ -1269,11 +1323,14 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
 
 
   // save filter info
-  Flag_HBHENoiseFilter=true;
+  Flag_HBHENoiseFilter=false;
+  Flag_HBHENoiseIsoFilter=false;
   Flag_CSCTightHaloFilter=false;
   Flag_goodVertices=false;
   Flag_eeBadScFilter=false;
-  Flag_EcalDeadCellTriggerPrimitiveFilter=true;
+  Flag_globalTightHalo2016Filter=false;
+  Flag_EcalDeadCellTriggerPrimitiveFilter=false;
+
   edm::Handle<edm::TriggerResults> metFilterBits;
   if (!event.getByToken(metFilterBitsPAT_, metFilterBits)){
     event.getByToken(metFilterBitsRECO_, metFilterBits);
@@ -1283,14 +1340,16 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   for ( auto& hltPath : metFilterNames_ ){
     unsigned int trigIndex = metFilterNames.triggerIndex(hltPath.first);
     if ( trigIndex < metFilterBits->size() ){
-      
       if ( metFilterBits->accept(trigIndex) ){
 	TString metname = TString(hltPath.first);
-	//	if(metname.Contains("Flag_HBHENoiseFilter")) Flag_HBHENoiseFilter=true;
+	if(metname.Contains("Flag_HBHENoiseFilter")) Flag_HBHENoiseFilter=true;
+	if(metname.Contains("Flag_HBHENoiseIsoFilter")) Flag_HBHENoiseIsoFilter=true;
 	if(metname.Contains("Flag_CSCTightHaloFilter")) Flag_CSCTightHaloFilter = true;
 	if(metname.Contains("Flag_goodVertices")) Flag_goodVertices = true;
 	if(metname.Contains("Flag_eeBadScFilter")) Flag_eeBadScFilter = true;
-	//	if(metname.Contains("Flag_EcalDeadCellTriggerPrimitiveFilter")) Flag_EcalDeadCellTriggerPrimitiveFilter = true;
+	if(metname.Contains("Flag_EcalDeadCellTriggerPrimitiveFilter")) Flag_EcalDeadCellTriggerPrimitiveFilter = true;
+	if(metname.Contains("Flag_globalTightHalo2016Filter"))Flag_globalTightHalo2016Filter = true;
+
       }
     }
   }
@@ -1389,7 +1448,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   /// Fill EventInfo
     
 
-  CatVersion_  = "v7-8-0";
+  CatVersion_  = "v8-0-1";
 
   IsData_      = event.isRealData();
   runNumber_   = event.run();
@@ -1418,7 +1477,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
       ++nFailure;
       continue;
     }
-
+  
     const int index = indices_[iCand];
     const std::vector<CandFtn>& exprs = exprs_[iCand];
     const std::vector<CandSel>& selectors = selectors_[iCand];
@@ -1455,7 +1514,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
       }
     }
   }
-  
+
 
 
   /// bools
@@ -1473,44 +1532,43 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
       const int index = indices_bool_[iCand_bool];
       const std::vector<CandFtn>& exprs = exprs_bool_[iCand_bool];
       const std::vector<CandSel>& selectors = selectors_bool_[iCand_bool];
-
+      
       std::vector<Vmap_boolToken>& vmap_boolTokens = vmap_boolTokens_[iCand_bool];
       const size_t nExpr = exprs.size();
       const size_t nSels = selectors.size();
       const size_t nVmap_bool = vmap_boolTokens.size();
       std::vector<edm::Handle<edm::ValueMap<bool> > > vmap_boolHandles(nVmap_bool);
-
+      
       for ( size_t iVar=0; iVar<nVmap_bool; ++iVar )
 	{
 	  event.getByToken(vmap_boolTokens[iVar], vmap_boolHandles[iVar]);
 	}
-
-      for ( size_t i=0, n=srcHandle->size(); i<n; ++i )
-	{
-	  if ( index >= 0 and int(i) != index ) continue;
-	  edm::Ref<CandView> cand_boolRef(srcHandle, i);
-
-	  for ( size_t j=0; j<nExpr; ++j )
-	    {
-	      const bool val = exprs[j](*cand_boolRef);
-	      cand_boolVars_[iCand_bool][j]->push_back(val);
-	    }
-
-	  for ( size_t j=0; j<nSels; ++j )
-	    {
-	      const bool val = selectors[j](*cand_boolRef);
-	      cand_boolVars_[iCand_bool][j+nExpr]->push_back(val);
-	    }
-
-	  for ( size_t j=0; j<nVmap_bool; ++j )
-	    {
-	      bool val = 0;
-	      if ( vmap_boolHandles[j].isValid() ) val = (*vmap_boolHandles[j])[cand_boolRef];
-	      cand_boolVars_[iCand_bool][j+nExpr+nSels]->push_back(val);
-	    }
-	}
+      
+      for ( size_t i=0, n=srcHandle->size(); i<n; ++i )	{
+	if ( index >= 0 and int(i) != index ) continue;
+	edm::Ref<CandView> cand_boolRef(srcHandle, i);
+	
+	for ( size_t j=0; j<nExpr; ++j )
+	  {
+	    const bool val = exprs[j](*cand_boolRef);
+	    cand_boolVars_[iCand_bool][j]->push_back(val);
+	  }
+	
+	for ( size_t j=0; j<nSels; ++j )
+	  {
+	    const bool val = selectors[j](*cand_boolRef);
+	    cand_boolVars_[iCand_bool][j+nExpr]->push_back(val);
+	  }
+	
+	for ( size_t j=0; j<nVmap_bool; ++j )
+	  {
+	    bool val = 0;
+	    if ( vmap_boolHandles[j].isValid() ) val = (*vmap_boolHandles[j])[cand_boolRef];
+	    cand_boolVars_[iCand_bool][j+nExpr+nSels]->push_back(val);
+	  }
+      }
     }
-
+  
 
 
 
@@ -1666,6 +1724,12 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   muon_x.clear();
   muon_y.clear();
   muon_z.clear();
+
+  muon_roch_pt.clear();
+  muon_roch_eta.clear();
+  muon_roch_phi.clear();
+  muon_roch_m.clear();
+  muon_roch_energy.clear();
   muon_pt.clear();
   muon_eta.clear();
   muon_phi.clear();
@@ -1723,6 +1787,8 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   electrons_dz.clear();
   electrons_isGsfCtfScPixChargeConsistent.clear();
 
+  delete rmcor;
+
 
   for ( size_t iCand=0; iCand<nCand; ++iCand )
   {
@@ -1751,7 +1817,6 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
         }
     }
 
-  
 }
 
 void GenericNtupleMakerSNU::endLuminosityBlock(const edm::LuminosityBlock& lumi, const edm::EventSetup& eventSetup)

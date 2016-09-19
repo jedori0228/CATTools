@@ -142,16 +142,16 @@ def CheckJobStatus(submitted_list, v):
 
 
             if copy_cms1:   
-                print "ssh " + username_snu  + "@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/Data/" + v + "/" + period_split_list[0]
-                os.system("ssh " +  username_snu +"@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/Data/" + str(v))
-                os.system("ssh " + username_snu  + "@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/Data/" + str(v) +"/" + period_split_list[0])
-                os.system("ssh " + username_snu  + "@cms3.snu.ac.kr rm -r /data4/DATA/FlatCatuples/Data/" + str(v) +"/" + period_split_list[0] + "/period" + period_split_list[1] )
-                os.system("ssh " + username_snu  + "@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/Data/" + str(v) +"/" + period_split_list[0] + "/period" + period_split_list[1] )
+                print "ssh " + username_snu  + "@147.47.242.42 mkdir /data2/DATA/cattoflat/Data/" + v + "/" + period_split_list[0]
+                os.system("ssh " +  username_snu +"@147.47.242.42 mkdir /data2/DATA/cattoflat/Data/" + str(v))
+                os.system("ssh " + username_snu  + "@147.47.242.42 mkdir /data2/DATA/cattoflat/Data/" + str(v) +"/" + period_split_list[0])
+                os.system("ssh " + username_snu  + "@147.47.242.42 rm -r /data2/DATA/cattoflat/Data/" + str(v) +"/" + period_split_list[0] + "/period" + period_split_list[1] )
+                os.system("ssh " + username_snu  + "@147.47.242.42 mkdir /data2/DATA/cattoflat/Data/" + str(v) +"/" + period_split_list[0] + "/period" + period_split_list[1] )
                 
 
-                print "scp SNU_" + v+ "_" +i +"/*.root " + " " + username_snu  + "@cms3.snu.ac.kr:/data4/DATA/FlatCatuples/Data/"  + str(v) + "/"  +"/" + period_split_list[0] + "/period" + period_split_list[1]
+                print "scp SNU_" + v+ "_" +i +"/*.root " + " " + username_snu  + "@147.47.242.42:/data2/DATA/cattoflat/Data/"  + str(v) + "/"  +"/" + period_split_list[0] + "/period" + period_split_list[1]
                 
-                os.system("scp SNU_" + v+ "_" +i +"/*.root " + " " + username_snu  + "@cms3.snu.ac.kr:/data4/DATA/FlatCatuples/Data/"  + str(v) + "/"  +"/" + period_split_list[0] + "/period" + period_split_list[1] )
+                os.system("scp SNU_" + v+ "_" +i +"/*.root " + " " + username_snu  + "@147.47.242.42:/data2/DATA/cattoflat/Data/"  + str(v) + "/"  +"/" + period_split_list[0] + "/period" + period_split_list[1] )
 
             print "submitted_list = " + submitted_list + " is set to: "
             new_submitted_list = string.replace(submitted_list, i+"!" , "")
@@ -168,7 +168,7 @@ ALLSamples= False
 periods = []
 if len(datasampledir) == 0:
     ALLSamples=True
-    periods = ["B" , "C"]
+    periods = ["B" , "C", "D", "E"]
 else:
     periods = data_periods
     
@@ -223,7 +223,7 @@ os.system("ls /tmp/ > check_snu_connection.txt")
 snu_connect = open("check_snu_connection.txt",'r')
 connected_cms3=False
 for line in snu_connect:
-    if "ssh-" +k_user +"@cms3" in line:
+    if "ssh-" +k_user +"@147.47.242.4" in line:
         connected_cms3=True
             
 os.system("rm check_snu_connection.txt")    
@@ -235,11 +235,10 @@ if connected_cms3 == False:
 
 ## Make a list of samples to process
 
-sampledir = ["DoubleEG"]
-sampledir = ["SingleMuon", "MuonEG", "DoubleEG", "SingleElectron"]
-sampledir = ["MuonEG"]
-sampledir = ["SingleMuon", "SingleElectron"]
-periods = ["B", "C"]
+sampledir = ["DoubleMuon", "SingleMuon", "MuonEG", "DoubleEG", "SingleElectron"]
+sampledir = ["SingleMuon"]
+periods = ["B", "C", "D", "E"]
+periods = ["C", "D","E"]
 
 if not ALLSamples == True:
     sampledir = datasampledir

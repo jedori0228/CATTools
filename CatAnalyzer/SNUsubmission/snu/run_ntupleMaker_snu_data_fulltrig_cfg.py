@@ -19,7 +19,8 @@ fileNames = cms.untracked.vstring(
 
 
 process.load("CATTools.CatAnalyzer.filters_cff")
-
+process.load("RecoMET.METFilters.BadChargedCandidateFilter_cfi")
+process.load("RecoMET.METFilters.BadPFMuonFilter_cfi") 
 
 process.nEventsTotal = cms.EDProducer("EventCountProducer")
 process.ntuple = cms.EDAnalyzer("GenericNtupleMakerSNU",
@@ -28,6 +29,7 @@ process.ntuple = cms.EDAnalyzer("GenericNtupleMakerSNU",
     genjet = cms.InputTag("slimmedGenJets"),
     genLabel      = cms.InputTag("prunedGenParticles"),
     triggerBits = cms.InputTag("TriggerResults::HLT"),
+    triggerBits2 = cms.InputTag("TriggerResults::HLT2"),
     triggerObjects = cms.InputTag("catTrigger"),
     triggerPrescales = cms.InputTag("patTrigger"),
     muons = cms.InputTag("catMuons"),
@@ -47,9 +49,13 @@ process.ntuple = cms.EDAnalyzer("GenericNtupleMakerSNU",
     metFilterBitsPAT = cms.InputTag("TriggerResults","","PAT"),                                                                                 
     metFilterBitsRECO = cms.InputTag("TriggerResults","","RECO"),                                                                                
                metFilterNames = cms.vstring(
-                "CSCTightHaloFilter",
-                "eeBadScFilter",
-                "goodVertices",
+    "HBHENoiseFilter",
+         "HBHENoiseIsoFilter",
+         "EcalDeadCellTriggerPrimitiveFilter",
+         "CSCTightHaloFilter",
+         "eeBadScFilter",
+         "globalTightHalo2016Filter",
+         "goodVertices",
 ),
                                 
                                 # Fill direct from Cattuple                                

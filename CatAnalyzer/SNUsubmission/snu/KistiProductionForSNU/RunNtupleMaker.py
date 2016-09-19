@@ -186,13 +186,13 @@ def CheckJobStatus(submitted_list, v):
 
 
             if copy_cms1:
-                print "ssh " + username_snu  + "@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/MC/" + v + "/" + i
-                os.system("ssh " + username_snu  + "@cms3.snu.ac.kr rm -r /data4/DATA/FlatCatuples/MC/" + v +"/" + i )
-                os.system("ssh " + username_snu  + "@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/MC/" + v)
-                os.system("ssh " + username_snu  + "@cms3.snu.ac.kr mkdir /data4/DATA/FlatCatuples/MC/" + v + "/" + i )
+                print "ssh " + username_snu  + "@147.47.242.42 mkdir /data2/DATA/cattoflat/MC/" + v + "/" + i
+                os.system("ssh " + username_snu  + "@147.47.242.42 rm -r /data2/DATA/cattoflat/MC/" + v +"/" + i )
+                os.system("ssh " + username_snu  + "@147.47.242.42 mkdir /data2/DATA/cattoflat/MC/" + v)
+                os.system("ssh " + username_snu  + "@147.47.242.42 mkdir /data2/DATA/cattoflat/MC/" + v + "/" + i )
 
-                print "scp SNU_" + v+ "_" +i +"/*.root " + " " + username_snu  + "@cms3.snu.ac.kr:/data4/DATA/FlatCatuples/MC/" + v + "/"  +i
-                os.system("scp SNU_" + v+ "_" +i +"/*.root " + username_snu  + "@cms3.snu.ac.kr:/data4/DATA/FlatCatuples/MC/"  + v + "/" +i) 
+                print "scp SNU_" + v+ "_" +i +"/*.root " + " " + username_snu  + "@147.47.242.42:/data2/DATA/cattoflat/MC/" + v + "/"  +i
+                os.system("scp SNU_" + v+ "_" +i +"/*.root " + username_snu  + "@147.47.242.42:/data2/DATA/cattoflat/MC/"  + v + "/" +i) 
              
             print "submitted_list = " + submitted_list + " is ammended to: "
             new_submitted_list = string.replace(submitted_list, i+"!" , "")
@@ -218,7 +218,7 @@ if not "ui10" in host:
 
 if os.path.exists("cat.txt"):
     os.system("rm cat.txt")
-os.system("source "+cmssw_dir+"/src/CATTools/CommonTools/test/snu/catversion.sh > cat.txt")
+os.system("source "+cmssw_dir+"/src/CATTools/CatAnalzer/SNUsubmission/snu/catversion.sh > cat.txt")
 
 
 
@@ -258,7 +258,7 @@ snu_connect = open("check_snu_connection.txt",'r')
 connected_cms3=False
 connected_cluster=False
 for line in snu_connect:
-    if "ssh-"+k_user+"@cms3" in line:
+    if "ssh-"+k_user+"@147.47.242.42" in line:
         connected_cms3=True
     if "ssh-"+k_user+"@147.47.242.67" in line:
         connected_cluster=True
@@ -276,14 +276,16 @@ if copy_cluster:
 
 
 ## Make a list of samples to process
-validation_sampledir=["DYJets" , "DYJets_10to50"]
-validation_sampledir=["DYJets_MG_10to50","DYJets_MG_5to50"]
-validation_sampledir=["TTJets_MG" ,"WW","WZ", "ZZ", "SingleTbar_t","SingleTbar_tW","SingleTop_s","SingleTop_t","SingleTop_tW", "ttbb","TTJets_aMC","TT_powheg","WJets","WJets_MG","WW","WWW","WZZ","WWZ","WZ","ZZ","ZZZ","ttH_bb","ttH_nonbb","ttW","ttZ"]
+validation_sampledir=["DYJets" , "DYJets_10to50", "DYJets_MG_10to50","DYJets_MG_5to50", "TTJets_MG" ]
+validation_sampledir=["WW","WZ", "ZZ", "SingleTbar_t","SingleTbar_tW","SingleTop_s","SingleTop_t","SingleTop_tW", "ttbb","TTJets_aMC","TT_powheg","WJets","WJets_MG","WWW","WZZ","WWZ","ZZZ","ttH_bb","ttH_nonbb","ttW","ttZ"]
+validation_sampledir=[ "DYJets_MG", "GG_HToMuMu","SingleTbar_tW_noHadron","SingleTop_tW_noHadron","TTLJ_powheg","TTLJ_powheg_scaledown","TTLJ_powheg_scaleup","TTLL_powheg","TTLL_powheg_scaledown","TTLL_powheg_scaleup","TT_powheg_mtop1695","TT_powheg_mtop1755","VBF_HToMuMu", "WJets","TTJets_aMC","ttH_bb","ttH_nonbb"]
+validation_sampledir=["SingleTbar_tW_noHadron","SingleTop_tW_noHadron"]
+#HLT2=False
 
-
-
+#if HLT2:
+ #   sampledir=validation_sampledirHLT2
+#else:
 sampledir=validation_sampledir
-
 
 #, "HN_ee_40", "HN_ee_100", "HN_ee_500", "HN_ee_1500","HN_mm_40","HN_mm_100","HN_mm_500","HN_mm_1500"]
 
@@ -572,7 +574,7 @@ for i in sampledir:
          cfgfile="run_ntupleMaker_snu_mc_signal_cfg.py"
     if PrivateSample == True:
         cfgfile="run_ntupleMaker_snu_mc_signal_cfg.py"
-        
+    
     print "using " + cfgfile    
     isjobrunning=False
     print "Running : CheckJobStatusAfterCrash"
@@ -611,15 +613,15 @@ for i in sampledir:
                     njobs_submitted = int(linesplit[0])
         print "Number of subjobs submitted = " + str(njobs_submitted)
     
-        if int(njobs_submitted) > 1000:
-            print "nsubjobs > 1000" 
-            print "waiting 1 minute before checking if #subjobs  < 1000. If this is true will submit more."
+        if int(njobs_submitted) > 700:
+            print "nsubjobs > 700" 
+            print "waiting 1 minute before checking if #subjobs  < 700. If this is true will submit more."
             time.sleep(60.)
             string_of_failed=CheckFailedJobStatus(string_of_submitted, version,string_of_failed)
             string_of_submitted=CheckJobStatus(string_of_submitted, version)
 
-        if int(njobs_submitted) < 1000:
-            print "Number of jobs < 1000. Will check if any jobs are finished"
+        if int(njobs_submitted) < 700:
+            print "Number of jobs < 700. Will check if any jobs are finished"
             check_njob_submitted = 1
             string_of_failed=CheckFailedJobStatus(string_of_submitted, version,string_of_failed)
             string_of_submitted=CheckJobStatus(string_of_submitted, version)

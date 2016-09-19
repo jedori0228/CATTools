@@ -13,22 +13,33 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 process.source = cms.Source("PoolSource",
 fileNames = cms.untracked.vstring(
-        'file:/cms/scratch/jalmond/privateCatuples/v7-6-3/EE/40/catTuple_1.root'
-        #"root://cms-xrdr.sdfarm.kr:1094///xrd/store/group/CAT/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/v7-6-3_RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/160221_150303/0000/catTuple_567.root"
+#        'file:/cms/scratch/jalmond/privateCatuples/v7-6-3/EE/40/catTuple_1.root'
+        "root://cms-xrdr.sdfarm.kr:1094///xrd/store/group/CAT/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/v8-0-1_RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/160810_120220/0000/catTuple_1.root"
+
       )
 )
 
 
 process.nEventsTotal = cms.EDProducer("EventCountProducer")
 
+
+
 process.load("CATTools.CatAnalyzer.flatGenWeights_cfi")
- 
+
+pileupWeight = 'PileupWeight'
+
+
+
+process.load("RecoMET.METFilters.BadChargedCandidateFilter_cfi")
+process.load("RecoMET.METFilters.BadPFMuonFilter_cfi") 
+
 process.ntuple = cms.EDAnalyzer("GenericNtupleMakerSNU",
     failureMode = cms.untracked.string("keep"), # choose one among keep/skip/error
     eventCounters = cms.vstring("nEventsTotal"), #"nEventsTotal", "nEventsClean", "nEventsPAT"),
     genjet = cms.InputTag("slimmedGenJets"),
     genLabel      = cms.InputTag("prunedGenParticles"),
     triggerBits = cms.InputTag("TriggerResults","","HLT"),
+    triggerBits2 = cms.InputTag("TriggerResults","","HLT2"),
     triggerObjects = cms.InputTag("catTrigger"),
     triggerPrescales = cms.InputTag("patTrigger"),
     muons = cms.InputTag("catMuons"),
@@ -40,30 +51,32 @@ process.ntuple = cms.EDAnalyzer("GenericNtupleMakerSNU",
     pdfweights = cms.InputTag("flatGenWeights","pdf"),
     scaleupweights = cms.InputTag("flatGenWeights","scaleup"),
     scaledownweights = cms.InputTag("flatGenWeights","scaledown"),
+
     runFullTrig= cms.bool(True),
-    keepAllGen= cms.bool(False),
+    keepAllGen= cms.bool(True),
     makeSlim= cms.bool(True),
-    allweights= cms.bool(False),                                
+    allweights= cms.bool(False),
     metFilterBitsPAT = cms.InputTag("TriggerResults","","PAT"),                                                                                                     metFilterBitsRECO = cms.InputTag("TriggerResults","","RECO"),               metFilterNames = cms.vstring(                                               
- "CSCTightHaloFilter",
- "eeBadScFilter",
-                "goodVertices",
+        
+  "HBHENoiseFilter",
+        "HBHENoiseIsoFilter",
+        "EcalDeadCellTriggerPrimitiveFilter",
+        "CSCTightHaloFilter",
+        "eeBadScFilter",
+        "globalTightHalo2016Filter",
+        "goodVertices",
+
 ), 
     int = cms.PSet(
         nGoodPV           =  cms.InputTag("catVertex"   , "nGoodPV"),
         nPV               =  cms.InputTag("catVertex"   , "nPV"    ),
-        nTrueInteraction  =  cms.InputTag("pileupWeight", "nTrueInteraction" ),
+        nTrueInteraction  =  cms.InputTag(pileupWeight, "nTrueInteraction" ),
         
     ),
     float = cms.PSet(
-        puWeightGold   = cms.InputTag("pileupWeight"),
-        puWeightGoldUp = cms.InputTag("pileupWeight", "up"),
-        puWeightGoldDn = cms.InputTag("pileupWeight", "dn"),
-
-
-
-
-
+        puWeightGold   = cms.InputTag(pileupWeight),
+        puWeightGoldUp = cms.InputTag(pileupWeight, "up"),
+        puWeightGoldDn = cms.InputTag(pileupWeight, "dn"),
     ),
 
     floats = cms.PSet(
