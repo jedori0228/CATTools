@@ -253,7 +253,25 @@ else:
 print "Output directory is " + kisti_output_default        
 
 
-os.system("ls /tmp/ > check_snu_connection.txt")
+os.system("cat ~/.ssh/config > check_connection.txt")
+
+ch_connect = open("check_connection.txt",'r')
+
+cpath="/tmp/"
+for line in ch_connect:
+    if "ControlPath" in line:
+        if "~/ssh" in line:
+            cpath="~/"
+        elif "/tmp/" in line:
+            cpath="/tmp/"
+        else:
+            print "Modify the cms21 connection since  ControlPath in ~/.ssh/cofig is set to something other than tmp or home dir"
+            
+ch_connect.close()
+os.system("rm check_connection.txt")
+
+
+os.system("ls " + cpath + " > check_snu_connection.txt")
 snu_connect = open("check_snu_connection.txt",'r')
 connected_cms3=False
 connected_cluster=False
