@@ -2,7 +2,7 @@ import os,sys
 
 from Setup import *
 
-datasetpath="/cms/scratch/SNU/datasets_v7-6-6/"
+datasetpath="/cms/scratch/SNU/datasets_v8-0-1/"
 datasetfilename="dataset_hntest.txt"
 datasetpath=datasetpath+datasetfilename
 
@@ -50,7 +50,7 @@ for line in ch_connect:
         elif "/tmp/" in line:
             cpath="/tmp/"
         else:
-            print "Modify the cms3 connection since  ControlPath in ~/.ssh/cofig is set to something other than tmp or home dir"
+            print "Modify the cms21 connection since  ControlPath in ~/.ssh/cofig is set to something other than tmp or home dir"
             
 ch_connect.close()
 os.system("rm check_connection.txt")
@@ -59,11 +59,11 @@ os.system("ls " + cpath + " > check_snu_connection.txt")
 snu_connect = open("check_snu_connection.txt",'r')
 connected_cms3=False
 for line in snu_connect:
-    if "ssh-"+k_user+"@cms3" in line:
+    if "ssh-"+k_user+"@147.47.242.42" in line:
         connected_cms3=True
         
 if not connected_cms3:
-    print "Script needs a connection to cms3 machine. Follow instructions on twiki to make this connection."
+    print "Script needs a connection to cms21 (147.47.242.42) machine. Follow instructions on twiki to make this connection."
     os.system("rm check_snu_connection.txt")
     sys.exit()
 else:

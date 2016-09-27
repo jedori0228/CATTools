@@ -66,14 +66,14 @@ if version != latest_version:
 
 def updateinput(datasetpath, datasetfile, version):
     #os.system('mail  -s "new sample '+ version + '"  jalmond@cern.ch < ' + datasetpath)
-    os.system('scp ' + datasetpath + ' ' + username_snu + '@cms3.snu.ac.kr:~/')
-    os.system('scp  sendmail.sh  ' + username_snu + '@cms3.snu.ac.kr:~/')
-    print "ssh " + username_snu+ "@cms3.snu.ac.kr 'source sendmail.sh'"
+    os.system('scp ' + datasetpath + ' ' + username_snu + '@147.47.242.42:~/')
+    os.system('scp  sendmail.sh  ' + username_snu + '@147.47.242.42:~/')
+    print "ssh " + username_snu+ "@147.47.242.42 'source sendmail.sh'"
     currentdir=cmssw_dir+"/src/CATTools/CatAnalyzer/SNUsubmission/snu/KistiProductionForSNU/"
     forcesend = open(currentdir+"forcesend.sh","w")
-    forcesend.write("ssh " + username_snu+ "@cms3.snu.ac.kr 'source sendmail.sh' \n")
-    forcesend.write("ssh " + username_snu+ "@cms3.snu.ac.kr 'rm " + datasetfile+ "'\n")
-    forcesend.write("ssh " + username_snu+ "@cms3.snu.ac.kr 'rm sendmail.sh'\n")
+    forcesend.write("ssh " + username_snu+ "@147.47.242.42 'source sendmail.sh' \n")
+    forcesend.write("ssh " + username_snu+ "@147.47.242.42 'rm " + datasetfile+ "'\n")
+    forcesend.write("ssh " + username_snu+ "@147.47.242.42 'rm sendmail.sh'\n")
     forcesend.close()
 
     os.system("source " + currentdir+"/forcesend.sh")
