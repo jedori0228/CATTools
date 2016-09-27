@@ -14,11 +14,10 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 process.source = cms.Source("PoolSource",
 fileNames = cms.untracked.vstring(
 #        'file:/cms/scratch/jalmond/privateCatuples/v7-6-3/EE/40/catTuple_1.root'
-        "root://cms-xrdr.sdfarm.kr:1094///xrd/store/group/CAT/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/v8-0-1_RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/160810_120220/0000/catTuple_1.root"
+        "root://cms-xrdr.sdfarm.kr:1094///xrd/store/group/CAT/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/v8-0-1_RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14_ext1-v1/160810_120437/0000/catTuple_1.root"
 
       )
 )
-
 
 process.nEventsTotal = cms.EDProducer("EventCountProducer")
 
@@ -26,8 +25,7 @@ process.nEventsTotal = cms.EDProducer("EventCountProducer")
 
 process.load("CATTools.CatAnalyzer.flatGenWeights_cfi")
 
-pileupWeight = 'PileupWeight'
-
+pileupWeight = 'pileupWeight'
 
 
 process.load("RecoMET.METFilters.BadChargedCandidateFilter_cfi")

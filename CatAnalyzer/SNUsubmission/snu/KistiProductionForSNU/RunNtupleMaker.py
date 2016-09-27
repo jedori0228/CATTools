@@ -276,15 +276,26 @@ if copy_cluster:
 
 
 ## Make a list of samples to process
-validation_sampledir=["DYJets" , "DYJets_10to50", "DYJets_MG_10to50","DYJets_MG_5to50", "TTJets_MG" ]
-validation_sampledir=["WW","WZ", "ZZ", "SingleTbar_t","SingleTbar_tW","SingleTop_s","SingleTop_t","SingleTop_tW", "ttbb","TTJets_aMC","TT_powheg","WJets","WJets_MG","WWW","WZZ","WWZ","ZZZ","ttH_bb","ttH_nonbb","ttW","ttZ"]
-validation_sampledir=[ "DYJets_MG", "GG_HToMuMu","SingleTbar_tW_noHadron","SingleTop_tW_noHadron","TTLJ_powheg","TTLJ_powheg_scaledown","TTLJ_powheg_scaleup","TTLL_powheg","TTLL_powheg_scaledown","TTLL_powheg_scaleup","TT_powheg_mtop1695","TT_powheg_mtop1755","VBF_HToMuMu", "WJets","TTJets_aMC","ttH_bb","ttH_nonbb"]
-validation_sampledir=["SingleTbar_tW_noHadron","SingleTop_tW_noHadron"]
-#HLT2=False
+validation_sampledir=["DYJets" , "DYJets_10to50", "DYJets_MG_10to50","DYJets_MG_5to50","DYJets_MG", "ttH_bb","ttH_nonbb","WJets","TTJets_aMC"]
 
-#if HLT2:
- #   sampledir=validation_sampledirHLT2
-#else:
+#validation_sampledir=[ "TTJets_MG" , "WW","WZ", "ZZ", "SingleTbar_t","SingleTbar_tW","SingleTop_s","SingleTop_t","SingleTop_tW", "ttbb","TTJets_aMC","TT_powheg","WJets","WJets_MG","WWW","WZZ","WWZ","ZZZ","ttH_bb","ttH_nonbb","ttW","ttZ" , "GG_HToMuMu","SingleTbar_tW_noHadron","SingleTop_tW_noHadron","TTLJ_powheg","TTLL_powheg","VBF_HToMuMu", "DYJets_10to50", "DYJets_MG_10to50","DYJets_MG_5to50","DYJets_MG"]
+
+runSYSTsamples=False
+if runSYSTsamples:
+    validation_sampledir += ["TTLL_powheg_scaledown","TTLL_powheg_scaleup","TT_powheg_mtop1695","TT_powheg_mtop1755", "TTLJ_powheg_scaledown","TTLJ_powheg_scaleup"]
+
+
+duplicate_samples=False
+samplelist_string=""
+for icheck in validation_sampledir:
+    additionstring="_"+icheck+"_:"
+    if additionstring in samplelist_string:
+        print "Sample " + icheck + " is in list twice"
+        quit()
+    else:   
+        samplelist_string+="_"+icheck+"_:"
+    
+
 sampledir=validation_sampledir
 
 #, "HN_ee_40", "HN_ee_100", "HN_ee_500", "HN_ee_1500","HN_mm_40","HN_mm_100","HN_mm_500","HN_mm_1500"]

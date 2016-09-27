@@ -22,7 +22,7 @@ fileNames = cms.untracked.vstring(
 
 process.nEventsTotal = cms.EDProducer("EventCountProducer")
 
-pileupWeight = 'PileupWeight'
+pileupWeight = 'pileupWeight'
 
 
 

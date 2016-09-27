@@ -963,6 +963,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   if (! event.getByToken(triggerBits2_, triggerBits)){
     event.getByToken(triggerBits_, triggerBits);
   }
+
   event.getByToken(triggerObjects_, triggerObjects);
 
   //const edm::TriggerNames &triggerNames = event.triggerNames(*triggerBits);

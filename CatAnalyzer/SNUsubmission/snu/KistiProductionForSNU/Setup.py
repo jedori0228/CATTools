@@ -9,6 +9,8 @@ import os,sys
 RunALLSamples=True
 PrivateSample=False
 
+runSYSTsamples=False
+
 ####### For now keep these the same  #########
 copy_cluster=False
 copy_cms1=True
