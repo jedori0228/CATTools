@@ -59,7 +59,7 @@ namespace cat {
     typedef math::XYZPoint Point;
     std::vector<NameTag> phoIDSrcs_;
     std::vector<edm::EDGetTokenT<edm::ValueMap<bool> > > phoIDTokens_;
-    const std::vector<std::string> photonIDs_;
+    const std::vector<std::string> photonIDs_, photonIDs_alt_;
 
   };
 
@@ -70,7 +70,8 @@ cat::CATPhotonProducer::CATPhotonProducer(const edm::ParameterSet & iConfig) :
   vertexLabel_(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertexLabel"))),
   mcLabel_(consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("mcLabel"))),
   rhoLabel_(consumes<double>(iConfig.getParameter<edm::InputTag>("rhoLabel"))),
-  photonIDs_(iConfig.getParameter<std::vector<std::string> >("photonIDs"))
+  photonIDs_(iConfig.getParameter<std::vector<std::string> >("photonIDs")),
+  photonIDs_alt_(iConfig.getParameter<std::vector<std::string> >("photonIDs_alt"))
 {
   produces<std::vector<cat::Photon> >();
   if (iConfig.existsAs<edm::ParameterSet>("photonIDSources")) {
@@ -160,15 +161,25 @@ cat::CATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
     
     if (phoIDSrcs_.size()){// for remade photon IDs
       for (size_t i = 0; i < phoIDSrcs_.size(); ++i){
-	ids[i].second = (*idhandles[i])[phosRef];
-	aPhoton.setPhotonID(ids[i]);
+        ids[i].second = (*idhandles[i])[phosRef];
+        aPhoton.setPhotonID(ids[i]);
       }
     }
     else if (photonIDs_.size()){// for sphoted IDs in miniAOD
       for(unsigned int i = 0; i < photonIDs_.size(); i++){
 
-	pat::Photon::IdPair pid(photonIDs_.at(i), aPatPhoton.photonID(photonIDs_.at(i)));
-	aPhoton.setPhotonID(pid);
+      pat::Photon::IdPair pid;
+
+      if( aPatPhoton.isPhotonIDAvailable(photonIDs_.at(i)) ){
+        pid = std::make_pair(photonIDs_.at(i), aPatPhoton.photonID(photonIDs_.at(i)));
+      }
+      else if( aPatPhoton.isPhotonIDAvailable(photonIDs_alt_.at(i)) ){
+        pid = std::make_pair(photonIDs_.at(i), aPatPhoton.photonID(photonIDs_alt_.at(i)));
+      }
+      else{
+        //==== ID not available
+      }
+      aPhoton.setPhotonID(pid);
       }
     }
     else {
