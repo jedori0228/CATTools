@@ -6,8 +6,8 @@ import os,sys
 ##########################################                                                                                                                                                                                                    
 
 ##### Set RunALLSamples=True true to simply add ALL samples to production list                                                                                                                                        
-RunALLSamples=True
-PrivateSample=False
+RunALLSamples=False
+PrivateSample=True
 
 runSYSTsamples=False
 

@@ -10,19 +10,19 @@ catversion="v8-0-6"
 os.system("bash /cvmfs/cms.cern.ch/crab3/crab.sh ")
 
 
-allsubmitted=True
-while allsubmitted:
+notallsubmitted=True
+while notallsubmitted:
     for channel in channels:
         for mass in masses:
 
-            if os.path.exists("HNLLPrivate/crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"//.requestcache"):
+            if os.path.exists("crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"//.requestcache"):
                 continue
-            if os.path.exists("HNLLPrivate/crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"/"):
-                os.system("rm -rf HNLLPrivate/crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"/")
+            if os.path.exists("crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"/"):
+                os.system("rm -rf crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"/")
 
-            crabHNfile = open("HNLLPrivate/crabConfigHN_"+channel+"_"+mass+".py","w")
+            crabHNfile = open("crabConfigHN_"+channel+"_"+mass+".py","w")
 
-            read_file_def = open("HNLLPrivate/crabConfigHN.py","r")
+            read_file_def = open("crabConfigHN.py","r")
             for line in read_file_def:
                 if "config.General.requestName" in line:
                     crabHNfile.write("config.General.requestName = 'MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"'\n")
@@ -32,9 +32,10 @@ while allsubmitted:
                     crabHNfile.write(line+"\n")
             read_file_def.close()
             crabHNfile.close()
-            os.system("crab submit -c HNLLPrivate/crabConfigHN_"+channel+"_"+mass+".py")
-        
+            os.system("crab submit -c crabConfigHN_"+channel+"_"+mass+".py")
+    notallsubmitted=False
     for channel in channels:
         for mass in masses:      
-            if not os.path.exists("HNLLPrivate/crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"//.requestcache"):
-                allsubmitted=False
+            if not os.path.exists("crab_MajoranaNeutrinoTo"+channel+"_Schannel_M-"+mass+"_"+catversion+"//.requestcache"):
+                notallsubmitted=True
+                

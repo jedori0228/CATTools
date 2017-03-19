@@ -318,15 +318,9 @@ if copy_cluster:
 
 
 ## Make a list of samples to process
-#validation_sampledir=["DYJets" , "DYJets_10to50","TT_powheg", "TTLJ_powheg","TTLL_powheg","WW","WZ" "ZZ", "WWW","WZZ","WWZ","ZZZ", "SingleTbar_t","SingleTbar_tW",  "SingleTbar_tW_noHadron","SingleTop_tW_noHadron","ttH_nonbb", "ttH_bb","WJets" ,"WJets",  "WJets_MG", "TTJets_aMC" , "WZTo3LNu_powheg", "WpWpEWK","WpWpQCD","ZZTo4L_powheg", "ttW","ttZ" ,"GG_HToMuMu","VBF_HToMuMu", "QCD_Pt-1000toInf_MuEnriched","QCD_Pt-120to170_EMEnriched","QCD_Pt-120to170_MuEnriched","QCD_Pt-15to20_EMEnriched","QCD_Pt-15to20_MuEnriched",    "QCD_Pt-170to300_EMEnriched","QCD_Pt-170to300_MuEnriched","QCD_Pt-20to30_EMEnriched","QCD_Pt-20to30_MuEnriched","QCD_Pt-300to470_MuEnriched","QCD_Pt-300toInf_EMEnriched",     "QCD_Pt-30to50_EMEnriched","QCD_Pt-30to50_MuEnriched","QCD_Pt-470to600_MuEnriched","QCD_Pt-50to80_EMEnriched","QCD_Pt-50to80_MuEnriched","QCD_Pt-600to800_MuEnriched", "QCD_Pt-800to1000_MuEnriched","QCD_Pt-80to120_EMEnriched","QCD_Pt-80to120_MuEnriched"]
+validation_sampledir=["DYJets" , "DYJets_10to50","TT_powheg", "TTLJ_powheg","TTLL_powheg","WW","WZ", "ZZ", "WWW","WZZ","WWZ","ZZZ", "SingleTbar_t","SingleTbar_tW",  "SingleTbar_tW_noHadron","SingleTop_tW_noHadron","ttH_nonbb", "ttH_bb","WJets",  "WJets_MG", "TTJets_aMC" , "WZTo3LNu_powheg", "WpWpEWK","WpWpQCD","ZZTo4L_powheg", "ttW","ttZ" ,"GG_HToMuMu","VBF_HToMuMu", "QCD_Pt-1000toInf_MuEnriched","QCD_Pt-120to170_EMEnriched","QCD_Pt-120to170_MuEnriched","QCD_Pt-15to20_MuEnriched",    "QCD_Pt-170to300_EMEnriched","QCD_Pt-170to300_MuEnriched","QCD_Pt-20to30_EMEnriched","QCD_Pt-20to30_MuEnriched","QCD_Pt-300to470_MuEnriched","QCD_Pt-300toInf_EMEnriched",     "QCD_Pt-30to50_EMEnriched","QCD_Pt-30to50_MuEnriched","QCD_Pt-470to600_MuEnriched","QCD_Pt-50to80_EMEnriched","QCD_Pt-50to80_MuEnriched","QCD_Pt-600to800_MuEnriched", "QCD_Pt-800to1000_MuEnriched","QCD_Pt-80to120_EMEnriched","QCD_Pt-80to120_MuEnriched", "ttbb", "TTJets_MG",  "WWTo2L2Nu","WWToLNuQQ", "SingleTop_s", "SingleTop_t","SingleTop_tW", "WGtoLNuG", "ttZToLL_M-1to10","ttWToLNu","WgstarToLNuEE","WgstarToLNuMuMu","ZGto2LG" , "WZTo3LNu_amcatnlo"]
 
-
-validation_sampledir=["DYJets" , "DYJets_10to50",  "ttH_bb","ttH_nonbb", "ttbb",  "WJets", "TTJets_aMC", "TTJets_MG", "WW","WZ", "ZZ","WZTo3LNu_powheg","ZZTo4L_powheg",  "WWTo2L2Nu","WWToLNuQQ","SingleTbar_t","SingleTbar_tW","SingleTop_s","SingleTop_t","SingleTop_tW","SingleTbar_tW_noHadron","SingleTop_tW_noHadron","WWW","WZZ","WWZ","ZZZ","ttW","ttZ" ,"GG_HToMuMu","VBF_HToMuMu", "WGtoLNuG", "ttZToLL_M-1to10","ttWToLNu","WgstarToLNuEE","WgstarToLNuMuMu","ZGto2LG"]
-
-
-validation_sampledir=["WZTo3LNu_amcatnlo","WpWpEWK_QCD"]
-
-validation_sampledir=["TT_powheg"]
+validation_sampledir=["DYJets_MG_10to50", "DYJets_MG","ttbb","TTJets_MG", "TTTT"] 
 
 runSYSTsamples=False
 if runSYSTsamples:
