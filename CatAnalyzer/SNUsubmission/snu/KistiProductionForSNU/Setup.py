@@ -48,19 +48,17 @@ if TChannel:
             mcsampledir.append("HNTChannel_"+lch +"_"+mass)
 
 
-PrivateSChannel=False
+PrivateSChannel=True
 if PrivateSChannel:
     mcsampledir=[]
     hn_mass=[ "40", "50" , "60", "100", "200","500", "1100","1500" ]
     lep_channel=["EmEm","EmMum","EmMup","EpMum","EpMup","MumEm","MumEp", "MumMum","MumMup","MupEm","MupEp","MupMum","MupMup"]
-
-    lep_channel=["MumMup" ]
-
+    lep_channel=["EpEp","EmEp","EpEm"]
     for lch in lep_channel:
         for mass in hn_mass:
             mcsampledir.append("HN"+lch +"_"+mass)
 
-OfficialSChannel=True
+OfficialSChannel=False
 if OfficialSChannel:
     mcsampledir=[]
     lep_channel = ["EpMup", "EpEp", "MupMup", "MupEp", "EmMum", "EmEm", "MumMum", "MumEm"]

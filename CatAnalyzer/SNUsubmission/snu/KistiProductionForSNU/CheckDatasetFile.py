@@ -18,10 +18,7 @@ def CheckDatasetFile(samplename, SendEmail):
     for line in path:
         if "DataSetName" in line:
             validName=True
-            splitline= line.split()
-            if len(splitline) == 4:
-                if"/" in splitline[3]:
-                    validName=False
+  
         if "name " in line:
             splitline= line.split()
             validAliasName=True
