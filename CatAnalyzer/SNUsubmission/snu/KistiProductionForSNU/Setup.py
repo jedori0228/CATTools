@@ -34,7 +34,25 @@ datasampledir = ["DoubleMuon"]
 
                 
 #### For MC only
-mcsampledir = ["HN_MupMup_200"]
+mcsampledir = [
+"HN_MuMuMu_5",
+"HN_MuMuMu_10",
+"HN_MuMuMu_20",
+"HN_MuMuMu_30",
+"HN_MuMuMu_40",
+"HN_MuMuMu_50",
+"HN_MuMuMu_60",
+"HN_MuMuMu_70",
+"HN_MuMuMu_90",
+"HN_MuMuMu_100",
+"HN_MuMuMu_150",
+"HN_MuMuMu_200",
+"HN_MuMuMu_300",
+"HN_MuMuMu_400",
+"HN_MuMuMu_500",
+"HN_MuMuMu_700",
+"HN_MuMuMu_1000"
+]
 
 ### Loop to run multipl Signal MC
 TChannel=False
@@ -60,7 +78,7 @@ if PrivateSChannel:
         for mass in hn_mass:
             mcsampledir.append("HN"+lch +"_"+mass)
 
-OfficialSChannel=True
+OfficialSChannel=False
 if OfficialSChannel:
     mcsampledir=[]
     lep_channel = ["EpMup", "EpEp", "MupMup", "MupEp", "EmMum", "EmEm", "MumMum", "MumEm"]

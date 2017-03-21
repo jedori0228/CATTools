@@ -379,7 +379,8 @@ if RunALLSamples:
 for i in sampledir:
 
     if not RunALLSamples:
-        CheckDatasetFile(i,False)
+        #CheckDatasetFile(i,False)
+        print ":)"
                 
     if "DY" in i or "TT" in i:
         njob=200
