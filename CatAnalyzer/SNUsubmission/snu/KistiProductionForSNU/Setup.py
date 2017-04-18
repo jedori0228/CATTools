@@ -5,7 +5,7 @@ import os,sys
 #### VARIABLES THAT NEED TO BE SET BY USER
 ##########################################                                                                                                                                                                                                    
 
-##### Set RunALLSamples=True true to simply add ALL samples to production list                                                                                                                                        
+##### Set RunALLSamples=True true to simply add ALL samples to production list                                                                                                                                      
 RunALLSamples=False
 PrivateSample=True
 
@@ -34,7 +34,11 @@ datasampledir = ["DoubleMuon"]
 
                 
 #### For MC only
-mcsampledir = ["HN_MupMup_200"]
+mcsampledir = ["WZG","WWG","ttZToLL_M-10","ggHtoWW","vbfHtoWW","qcd_15to20_bctoe","qcd_20to30_bctoe","qcd_30to80_bctoe" ,"qcd_80to170_bctoe","qcd_170to250_bctoe","qcd_250toinf_bctoe","ww_ds"] 
+mcsampledir = [ "ggHtoZZ","TG","TTG","tZq","vbhHtoZZ", "ZZTo2L2Nu_Powheg","ZZTo2L2Q_Powheg","ggZZto2e2mu","ggZZto2e2nu","ggZZto2e2tau","ggZZto2mu2nu","ggZZto2mu2tau","ggZZto4e","ggZZto4mu","ggZZto4tau","ggWWto2L2Nu","WZto2L2Q_amcatnlo","QCD_DoubleEMEnriched_30-40_mgg80toinf","QCD_DoubleEMEnriched_30-inf_mgg40to80","QCD_DoubleEMEnriched_40-inf_mgg80toinf" ,"DYtoEE"]
+
+
+
 
 ### Loop to run multipl Signal MC
 TChannel=False
@@ -45,10 +49,10 @@ if TChannel:
     lep_channel=["mummum"]
     for lch in lep_channel:
         for mass in hn_mass: 
-            mcsampledir.append("HNTChannel_"+lch +"_"+mass)
+            mcsampledir.append("HNTChannel_"+lch +mass)
 
 
-PrivateSChannel=True
+PrivateSChannel=False
 if PrivateSChannel:
     mcsampledir=[]
     hn_mass=[ "40", "50" , "60", "100", "200","500", "1100","1500" ]
@@ -68,6 +72,18 @@ if OfficialSChannel:
     for lch in lep_channel:
         for mass in hn_mass:
             mcsampledir.append("HNMoriondLL"+lch +"_"+mass)
+
+
+OfficialTChannel=False
+if OfficialTChannel:
+    mcsampledir=[]
+    lep_channel = ["EpMup", "EpEp", "MupMup", "MupEp", "EmMum", "EmEm", "MumMum", "MumEm"]
+
+    hn_mass = [ "100", "200", "500", "1100"]
+
+    for lch in lep_channel:
+        for mass in hn_mass:
+            mcsampledir.append("HNMoriondLL_Tchannel_"+lch +"_"+mass)
 
 
 

@@ -123,6 +123,8 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
         ## #######################################################################
         ## # MET corrections from https://twiki.cern.ch/twiki/bin/view/CMS/MissingETUncertaintyPrescription
         from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+
         runMetCorAndUncFromMiniAOD(process, isData= not runOnMC, electronColl=cms.InputTag('calibratedPatElectrons'))
         process.catMETs.src = cms.InputTag("slimmedMETs","","CAT")
 
@@ -152,6 +154,7 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
         from CATTools.CatProducer.patTools.egmVersionedID_cff import enableElectronVID, enablePhotonVID
         process = enableElectronVID(process)
         process = enablePhotonVID(process)
+
 
         ## Electron ID without isolation cuts
         from CATTools.CatProducer.patTools.egmNoIsoID_cff import enableElectronNoIsoID

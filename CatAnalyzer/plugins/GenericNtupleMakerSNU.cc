@@ -337,7 +337,7 @@ private:
   /// Muons  8
   vector<bool> muon_isTrackerMuon, muon_isGlobalMuon, muon_isLooseMuon, muon_isMediumMuon, muon_isTightMuon, muon_isSoftMuon, muon_mcMatched, muon_isPFMuon;
   /// Electrons 13
-  vector<bool>  electrons_electronID_loose,electrons_electronID_medium,electrons_electronID_tight,electrons_electronID_veto,electrons_electronID_mva_medium,electrons_electronID_mva_tight,electrons_electronID_mva_trig_medium,electrons_electronID_mva_trig_tight,electrons_electronID_heep,  electrons_mcMatched,electrons_isPF,electrons_passConversionVeto,electrons_isTrigMVAValid;
+  vector<bool>  electrons_electronID_loose,electrons_electronID_medium,electrons_electronID_tight,electrons_electronID_veto,electrons_electronID_mva_medium, electrons_electronID_mva_zz,electrons_electronID_mva_tight,electrons_electronID_mva_trig_medium,electrons_electronID_mva_trig_tight,electrons_electronID_heep,  electrons_mcMatched,electrons_isPF,electrons_passConversionVeto,electrons_isTrigMVAValid, electrons_electron_hlt;
   /// Jest 3
   vector<bool>  jets_looseJetID,jets_tightJetID,jets_tightLepVetoJetID;
   vector<bool>  fatjets_looseJetID,fatjets_tightJetID,fatjets_tightLepVetoJetID;
@@ -591,6 +591,8 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
   tree_->Branch("electrons_electronID_medium",  "std::vector<bool>", &electrons_electronID_medium);
   tree_->Branch("electrons_electronID_tight",  "std::vector<bool>", &electrons_electronID_tight);
   tree_->Branch("electrons_electronID_veto",  "std::vector<bool>", &electrons_electronID_veto);
+  tree_->Branch("electrons_electron_hlt",  "std::vector<bool>", &electrons_electron_hlt);
+  tree_->Branch("electrons_electronID_mva_zz",  "std::vector<bool>", &electrons_electronID_mva_zz);
   tree_->Branch("electrons_electronID_mva_medium",  "std::vector<bool>", &electrons_electronID_mva_medium);
   tree_->Branch("electrons_electronID_mva_tight",  "std::vector<bool>", &electrons_electronID_mva_tight);
   tree_->Branch("electrons_electronID_mva_trig_medium",  "std::vector<bool>", &electrons_electronID_mva_trig_medium);
@@ -1199,11 +1201,15 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     electrons_electronID_medium.push_back(el.electronID("cutBasedElectronID-Summer16-80X-V1-medium"));
     electrons_electronID_tight.push_back(el.electronID("cutBasedElectronID-Summer16-80X-V1-tight"));
     electrons_electronID_veto.push_back(el.electronID("cutBasedElectronID-Summer16-80X-V1-veto"));
+    electrons_electron_hlt.push_back(el.electronID("cutBasedElectronHLTPreselection-Summer16-V1"));
+    electrons_electronID_mva_zz.push_back(el.electronID("EleID-Spring16-HZZ-V1-wpLoose"));
     electrons_electronID_mva_medium.push_back(el.electronID("EleID-Spring16-GeneralPurpose-V1-wp90"));
     electrons_electronID_mva_tight.push_back(el.electronID("EleID-Spring16-GeneralPurpose-V1-wp80"));
     electrons_electronID_mva_trig_medium.push_back(el.electronID("EleID-Spring16-GeneralPurpose-V1-wp90"));
     electrons_electronID_mva_trig_tight.push_back(el.electronID("EleID-Spring16-GeneralPurpose-V1-wp80"));
-    //electrons_electronID_heep.push_back(el.electronID("heepElectronID-HEEPV60"));
+
+    electrons_electronID_heep.push_back(el.electronID("heepElectronID-HEEPV70"));
+
 
     electrons_mcMatched.push_back(el.mcMatched());
     electrons_isPF.push_back(el.isPF());
@@ -1938,6 +1944,8 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   electrons_electronID_medium.clear();
   electrons_electronID_tight.clear();
   electrons_electronID_veto.clear();
+  electrons_electron_hlt.clear();
+  electrons_electronID_mva_zz.clear();
   electrons_electronID_mva_medium.clear();
   electrons_electronID_mva_tight.clear();
   electrons_electronID_mva_trig_medium.clear();
