@@ -11,6 +11,7 @@ options.register('useMiniAOD', True, VarParsing.multiplicity.singleton, VarParsi
 options.register('globalTag', '', VarParsing.multiplicity.singleton, VarParsing.varType.string, "globalTag: 1  default")
 options.register('runGenTop', True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "runGenTop: 1  default")
 
+
 options.parseArguments()
 runOnMC = options.runOnMC
 useMiniAOD = options.useMiniAOD

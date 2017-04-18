@@ -318,9 +318,8 @@ if copy_cluster:
 
 
 ## Make a list of samples to process
-validation_sampledir=["DYJets" , "DYJets_10to50","TT_powheg", "TTLJ_powheg","TTLL_powheg","WW","WZ", "ZZ", "WWW","WZZ","WWZ","ZZZ", "SingleTbar_t","SingleTbar_tW",  "SingleTbar_tW_noHadron","SingleTop_tW_noHadron","ttH_nonbb", "ttH_bb","WJets",  "WJets_MG", "TTJets_aMC" , "WZTo3LNu_powheg", "WpWpEWK","WpWpQCD","ZZTo4L_powheg", "ttW","ttZ" ,"GG_HToMuMu","VBF_HToMuMu", "QCD_Pt-1000toInf_MuEnriched","QCD_Pt-120to170_EMEnriched","QCD_Pt-120to170_MuEnriched","QCD_Pt-15to20_MuEnriched",    "QCD_Pt-170to300_EMEnriched","QCD_Pt-170to300_MuEnriched","QCD_Pt-20to30_EMEnriched","QCD_Pt-20to30_MuEnriched","QCD_Pt-300to470_MuEnriched","QCD_Pt-300toInf_EMEnriched",     "QCD_Pt-30to50_EMEnriched","QCD_Pt-30to50_MuEnriched","QCD_Pt-470to600_MuEnriched","QCD_Pt-50to80_EMEnriched","QCD_Pt-50to80_MuEnriched","QCD_Pt-600to800_MuEnriched", "QCD_Pt-800to1000_MuEnriched","QCD_Pt-80to120_EMEnriched","QCD_Pt-80to120_MuEnriched", "ttbb", "TTJets_MG",  "WWTo2L2Nu","WWToLNuQQ", "SingleTop_s", "SingleTop_t","SingleTop_tW", "WGtoLNuG", "ttZToLL_M-1to10","ttWToLNu","WgstarToLNuEE","WgstarToLNuMuMu","ZGto2LG" , "WZTo3LNu_amcatnlo"]
-
-validation_sampledir=["DYJets_MG_10to50", "DYJets_MG","ttbb","TTJets_MG", "TTTT"] 
+validation_sampledir=["DYJets" , "DYJets_10to50","TT_powheg", "TTLJ_powheg","TTLL_powheg","WW","WZ", "ZZ", "WWW","WZZ","WWZ","ZZZ", "SingleTbar_t","SingleTbar_tW",  "SingleTbar_tW_noHadron","SingleTop_tW_noHadron","ttH_nonbb", "ttH_bb","WJets",  "WJets_MG", "TTJets_aMC" , "WZTo3LNu_powheg", "WpWpEWK","WpWpQCD","ZZTo4L_powheg", "ttW","ttZ" ,"GG_HToMuMu","VBF_HToMuMu", "QCD_Pt-1000toInf_MuEnriched","QCD_Pt-120to170_EMEnriched","QCD_Pt-120to170_MuEnriched","QCD_Pt-15to20_MuEnriched",    "QCD_Pt-170to300_EMEnriched","QCD_Pt-170to300_MuEnriched","QCD_Pt-20to30_EMEnriched","QCD_Pt-20to30_MuEnriched","QCD_Pt-300to470_MuEnriched","QCD_Pt-300toInf_EMEnriched",     "QCD_Pt-30to50_EMEnriched","QCD_Pt-30to50_MuEnriched","QCD_Pt-470to600_MuEnriched","QCD_Pt-50to80_EMEnriched","QCD_Pt-50to80_MuEnriched","QCD_Pt-600to800_MuEnriched", "QCD_Pt-800to1000_MuEnriched","QCD_Pt-80to120_EMEnriched","QCD_Pt-80to120_MuEnriched",  "WWTo2L2Nu","WWToLNuQQ", "SingleTop_s", "SingleTop_t","SingleTop_tW", "WGtoLNuG", "ttZToLL_M-1to10","ttWToLNu","WgstarToLNuEE","WgstarToLNuMuMu","ZGto2LG" , "WZTo3LNu_amcatnlo", "DYJets_MG_10to50", "DYJets_MG","ttbb","TTJets_MG", "TTTT" ]
+                      
 
 runSYSTsamples=False
 if runSYSTsamples:
@@ -370,14 +369,15 @@ string_of_failed=""
 skip_first=0
 dataset_tag=""
 
-if RunALLSamples:
-    if "jalmond" in username_snu:
-        os.system("scp -r /cms/scratch/SNU/datasets_" +version + "/ " + username_snu  + "@147.47.242.42:/data1/LQAnalyzer_rootfiles_for_analysis/DataSetLists/")
-        os.system("ssh " + username_snu  + "@147.47.242.42 chmod -R 777  /data1/LQAnalyzer_rootfiles_for_analysis/DataSetLists/datasets_" +version + "/")
-
-
+if False:
+    if RunALLSamples:
+        if "jalmond" in username_snu:
+            os.system("scp -r /cms/scratch/SNU/datasets_" +version + "/ " + username_snu  + "@147.47.242.42:/data1/LQAnalyzer_rootfiles_for_analysis/DataSetLists/")
+            os.system("ssh " + username_snu  + "@147.47.242.42 chmod -R 777  /data1/LQAnalyzer_rootfiles_for_analysis/DataSetLists/datasets_" +version + "/")
+            
+            
 for i in sampledir:
-
+    print i 
     if not RunALLSamples:
         #CheckDatasetFile(i,False)
         print ":)"
@@ -451,7 +451,6 @@ for i in sampledir:
     os.system("cut -d/ -f 8 " + kisti_output+ "/"+output  + "_skim.txt  > " + kisti_output + "/"+output + "_end.txt")
     
 
-
     ## Get the tag of the production: using the newest tag of version, it is automatic
     fr_end = open(kisti_output+ "/"+output+"_end.txt",'r')
     tagpath =""
@@ -496,7 +495,6 @@ for i in sampledir:
                 f.write("No sample found for " + str(i))
             continue
         
-
     os.system("xrd cms-xrdr.sdfarm.kr ls /xrd/store/group/CAT/" + output  + "/" + versionpath + "/" + tagpath + " > " + kisti_output+ "/"+output + "_resub.txt")
     fr_check_resubmit = open(kisti_output+ "/"+output +"_resub.txt",'r')
     
@@ -631,7 +629,7 @@ for i in sampledir:
 
     #### QCD SAMPLES: Slim but only 30 gen kept
     if runfullgen == False:
-        cfgfile="run_ntupleMaker_snu_mc_nofullgen_cfg.py"
+        cfgfile="run_ntupleMaker_snu_mc_cfg.py"
     #### DY sample: PDF + scale weights stored, slim made
     if AllWeights == True:
         cfgfile="run_ntupleMaker_snu_mc_allweights_cfg.py"   
@@ -653,7 +651,7 @@ for i in sampledir:
         continue
 
     print "CheckJobStatusAfterCrash = False"
-
+    
     runcommand="./create-batch_snu   --jobName " + jobname + " --fileList   /cms/scratch/SNU/datasets_" +version + "/" + datasetlist +"  --maxFiles " + str(nfilesperjob) + "  --cfg ../" + cfgfile  + "   --queue batch6  --transferDest /xrootd/store/user/"+k_user
     print "Running:"
     print  runcommand

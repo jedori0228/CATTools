@@ -2,7 +2,6 @@
 #include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-
 #include "DataFormats/Common/interface/Association.h"
 #include "DataFormats/Common/interface/RefToPtr.h"
 
@@ -62,6 +61,7 @@ cat::CATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   			      aPatMET.shiftedSumEt(pat::MET::UnclusteredEnDown));
   }
   
+
   aMET.setXYShiftedMET(aPatMET.shiftedPx(pat::MET::NoShift, pat::MET::Type1XY),
 		       aPatMET.shiftedPy(pat::MET::NoShift, pat::MET::Type1XY),
 		       aPatMET.shiftedSumEt(pat::MET::NoShift, pat::MET::Type1XY));

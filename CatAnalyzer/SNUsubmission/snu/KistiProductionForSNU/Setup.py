@@ -5,7 +5,7 @@ import os,sys
 #### VARIABLES THAT NEED TO BE SET BY USER
 ##########################################                                                                                                                                                                                                    
 
-##### Set RunALLSamples=True true to simply add ALL samples to production list                                                                                                                                        
+##### Set RunALLSamples=True true to simply add ALL samples to production list                                                                                                                                      
 RunALLSamples=False
 PrivateSample=True
 
@@ -63,7 +63,7 @@ if TChannel:
     lep_channel=["mummum"]
     for lch in lep_channel:
         for mass in hn_mass: 
-            mcsampledir.append("HNTChannel_"+lch +"_"+mass)
+            mcsampledir.append("HNTChannel_"+lch +mass)
 
 
 PrivateSChannel=False
@@ -71,9 +71,7 @@ if PrivateSChannel:
     mcsampledir=[]
     hn_mass=[ "40", "50" , "60", "100", "200","500", "1100","1500" ]
     lep_channel=["EmEm","EmMum","EmMup","EpMum","EpMup","MumEm","MumEp", "MumMum","MumMup","MupEm","MupEp","MupMum","MupMup"]
-
-    lep_channel=["MumMup" ]
-
+    lep_channel=["EpEp","EmEp","EpEm"]
     for lch in lep_channel:
         for mass in hn_mass:
             mcsampledir.append("HN"+lch +"_"+mass)
@@ -88,6 +86,18 @@ if OfficialSChannel:
     for lch in lep_channel:
         for mass in hn_mass:
             mcsampledir.append("HNMoriondLL"+lch +"_"+mass)
+
+
+OfficialTChannel=False
+if OfficialTChannel:
+    mcsampledir=[]
+    lep_channel = ["EpMup", "EpEp", "MupMup", "MupEp", "EmMum", "EmEm", "MumMum", "MumEm"]
+
+    hn_mass = [ "100", "200", "500", "1100"]
+
+    for lch in lep_channel:
+        for mass in hn_mass:
+            mcsampledir.append("HNMoriondLL_Tchannel_"+lch +"_"+mass)
 
 
 
