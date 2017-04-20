@@ -53,6 +53,7 @@ namespace cat {
     float getEffArea( float dR, float scEta );
     int getSNUID(float, float, float, float, float, float, int, bool, float);
     edm::EDGetTokenT<edm::View<pat::Electron> > src_;
+    edm::EDGetToken electronsMiniAODToken_;
     edm::EDGetTokenT<edm::View<pat::Electron> > unsmearedElecToken_;
     edm::EDGetTokenT<reco::VertexCollection> vertexLabel_;
     edm::EDGetTokenT<reco::GenParticleCollection> mcLabel_;
@@ -60,6 +61,8 @@ namespace cat {
     edm::EDGetTokenT<reco::BeamSpot> beamLineSrc_;
     edm::EDGetTokenT<double> rhoLabel_;
 
+    edm::EDGetTokenT<edm::ValueMap<float> > mvaValuesMapToken_;
+    edm::EDGetTokenT<edm::ValueMap<float> > zzmvaValuesMapToken_;
     bool runOnMC_;
 
     typedef std::pair<std::string, edm::InputTag> NameTag;
@@ -68,6 +71,10 @@ namespace cat {
     std::vector<NameTag> elecIDSrcs_;
     std::vector<edm::EDGetTokenT<edm::ValueMap<bool> > > elecIDTokens_;
     const std::vector<std::string> electronIDs_;
+
+    std::vector<Float_t> mvaValue_;
+    std::vector<Float_t> zzmvaValue_;
+    
 
   };
 
@@ -141,9 +148,15 @@ cat::CATElectronProducer::CATElectronProducer(const edm::ParameterSet & iConfig)
   pfSrc_(consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfSrc"))),
   beamLineSrc_(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamLineSrc"))),
   rhoLabel_(consumes<double>(iConfig.getParameter<edm::InputTag>("rhoLabel"))),
+  mvaValuesMapToken_(consumes<edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("mvaValuesMap"))),
+  zzmvaValuesMapToken_(consumes<edm::ValueMap<float> >(iConfig.getParameter<edm::InputTag>("zzmvaValuesMap"))),
   electronIDs_(iConfig.getParameter<std::vector<std::string> >("electronIDs"))
 {
   
+
+  electronsMiniAODToken_    = mayConsume<edm::View<reco::GsfElectron> >
+    (iConfig.getParameter<edm::InputTag>
+     ("electronsMiniAOD"));
 
   produces<std::vector<cat::Electron> >();
   if (iConfig.existsAs<edm::ParameterSet>("electronIDSources")) {
@@ -167,6 +180,25 @@ cat::CATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   Handle<edm::View<pat::Electron> > src;
   iEvent.getByToken(src_, src);
 
+  edm::Handle<edm::View<reco::GsfElectron> > electrons;
+  iEvent.getByToken(electronsMiniAODToken_,electrons);
+
+
+  edm::Handle<edm::ValueMap<float> > mvaValues;
+  iEvent.getByToken(mvaValuesMapToken_,mvaValues);
+  
+
+  edm::Handle<edm::ValueMap<float> > zzmvaValues;
+  iEvent.getByToken(zzmvaValuesMapToken_,zzmvaValues);
+
+
+
+  /*for (size_t i = 0; i < electrons->size(); ++i){
+    const auto el = electrons->ptrAt(i); 
+    cout << "mvavalues = " <<  (*mvaValues)[el] << endl;
+    cout << "zzmvavalues = " <<  (*zzmvaValues)[el] << endl;
+    }*/
+  
   edm::Handle<edm::View<pat::Electron> > unsmearedElecHandle;
   iEvent.getByToken(unsmearedElecToken_, unsmearedElecHandle);
 
@@ -206,6 +238,11 @@ cat::CATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     cat::Electron aElectron(aPatElectron);
     auto elecsRef = src->refAt(j);
     auto unsmearedElecRef = unsmearedElecHandle->refAt(j);
+
+    const auto el = electrons->ptrAt(j);
+    //cout << "mvavalues2 = " <<  (*mvaValues)[el] << endl;
+    //cout << "zzmvavalues2 = " <<  (*zzmvaValues)[el] << endl;
+
     // nan protection - smearing fails for soft electrons
     if ( std::isnan(std::abs(aElectron.p())) ) aElectron = *unsmearedElecRef;
 
@@ -253,6 +290,9 @@ cat::CATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
     aElectron.setscEta( aPatElectron.superCluster()->eta());
     aElectron.setPassConversionVeto( aPatElectron.passConversionVeto() );
+    
+    aElectron.setMVA((*mvaValues)[el]);
+    aElectron.setZZMVA((*zzmvaValues)[el]);
 
     if (elecIDSrcs_.size()){// for remade electron IDs
       for (size_t i = 0; i < elecIDSrcs_.size(); ++i){

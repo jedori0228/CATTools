@@ -155,6 +155,16 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
         process = enableElectronVID(process)
         process = enablePhotonVID(process)
 
+        #from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+        #switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+        #my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff']
+        #for idmod in my_id_modules:
+        #    setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
+
+
+            #process.egmGsfElectronIDSequence()
+        
 
         ## Electron ID without isolation cuts
         from CATTools.CatProducer.patTools.egmNoIsoID_cff import enableElectronNoIsoID

@@ -105,6 +105,17 @@ namespace cat {
 
     float qgLikelihood() const { return qgLikelihood_; }
     
+    float RawPt() const {return rawpt_;}
+    float RawE() const {return rawe_;}
+    
+
+    float L2L3resJEC() const { return l2l3res_;}
+    float L3absJEC() const { return l3fabs_ ;}
+    float L2relJEC() const { return l2rel_ ;}
+    float L1fastjetJEC() const { return l1fast_ ;}
+    float Rho() const { return rho_ ;}
+    
+    
     void setLooseJetID(bool id) { looseJetID_ = id; }
     void setTightJetID(bool id) { tightJetID_ = id; }
     void setTightLepVetoJetID(bool id) { tightLepVetoJetID_ = id; }
@@ -135,6 +146,14 @@ namespace cat {
     }
 
     void setQGLikelihood(float f) { qgLikelihood_ = f; }
+
+    void setRawPt(float f) {rawpt_= f;}
+    void setRawE(float f) {rawe_= f;}
+    void setL2L3resJEC(float f) {l2l3res_= f;}
+    void setL3absJEC(float f) {l3fabs_ = f;}
+    void setL2relJEC(float f) {l2rel_ = f;}
+    void setL1fastjetJEC(float f) {l1fast_ = f;}
+    void setRho(float f) {rho_ = f;}
 
   private:
 
@@ -168,6 +187,8 @@ namespace cat {
 
     float qgLikelihood_;
 
+    float rawpt_, rawe_, l2l3res_,l3fabs_, l2rel_, l1fast_;
+    float rho_;
   };
 }
 
