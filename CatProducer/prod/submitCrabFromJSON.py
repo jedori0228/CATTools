@@ -81,7 +81,8 @@ def initConfig(runOnMC):
 
     config.section_("Site")
     config.Site.storageSite = 'T3_KR_KISTI'
-    config.Data.outLFNDirBase = '/store/group/CAT/' 
+    config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB())
+    #config.Data.outLFNDirBase = '/store/group/CAT/' 
 
     if runOnMC:
         config.Data.splitting='FileBased'
