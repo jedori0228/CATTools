@@ -10,6 +10,9 @@
 #include "DataFormats/Common/interface/Association.h"
 #include "DataFormats/Common/interface/RefToPtr.h"
 
+#include "FWCore/Utilities/interface/InputTag.h"
+
+
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "CATTools/DataFormats/interface/Jet.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
@@ -39,6 +42,7 @@ public:
   void beginLuminosityBlock(const edm::LuminosityBlock& lumi, const edm::EventSetup&) override;
 
   std::vector<const reco::Candidate *> getAncestors(const reco::Candidate &c);
+  std::string upperCase(std::string input);
   bool hasBottom(const reco::Candidate &c);
   bool hasCharm(const reco::Candidate &c);
   bool decayFromBHadron(const reco::Candidate &c);
@@ -48,6 +52,7 @@ public:
 
 private:
   edm::EDGetTokenT<pat::JetCollection> src_;
+  const edm::InputTag   inputTag;
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<edm::ValueMap<float>> qgToken_;
   std::vector<std::string> flavTagNames_;
@@ -60,6 +65,7 @@ private:
   bool runOnMC_;
   //PFJetIDSelectionFunctor pfjetIDFunctor;
   JetCorrectionUncertainty *jecUnc;
+  bool ispuppi;
 
   CLHEP::HepRandomEngine* rng_;
 };
@@ -68,6 +74,7 @@ private:
 
 cat::CATJetProducer::CATJetProducer(const edm::ParameterSet & iConfig) :
   src_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("src"))),
+  inputTag (iConfig.getParameter<edm::InputTag>("src")),// to find if puppi
   rhoToken_(consumes<double>(iConfig.getParameter<edm::InputTag>("rho"))),
   qgToken_(consumes<edm::ValueMap<float>>(iConfig.getParameter<edm::InputTag>("qgLikelihood"))),
   btagNames_(iConfig.getParameter<std::vector<std::string> >("btagNames")),
@@ -80,10 +87,25 @@ cat::CATJetProducer::CATJetProducer(const edm::ParameterSet & iConfig) :
     const std::string name = label.label() + ":" + label.instance();
     flavTagNames_.push_back(name);
     flavTagTokens_.push_back(consumes<edm::ValueMap<float>>(label));
+
   }
+
+  if(upperCase(inputTag.label()).find(upperCase("PUPPI")) != std::string::npos)ispuppi=true;
+  else ispuppi=false;
+  
 
   produces<std::vector<cat::Jet> >();
 }
+
+
+std::string cat::CATJetProducer::upperCase(std::string input)
+{
+  for (std::string::iterator it = input.begin(); it != input.end(); ++ it)
+    *it = toupper(*it);
+  return input;
+}
+
+
 
 void cat::CATJetProducer::beginLuminosityBlock(const edm::LuminosityBlock& lumi, const edm::EventSetup&)
 {
@@ -215,6 +237,22 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       //aJet.setQGLikelihood(aPatJet.userFloat("QGTaggerAK4PFCHS:qgLikelihood"));
     }
 
+    /// Set variables for SNU
+    aJet.setRawPt(aPatJet.correctedJet("Uncorrected").pt() );
+    aJet.setRawE(aPatJet.correctedJet("Uncorrected").energy() );
+    if(iEvent.isRealData()){
+      aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());
+    }
+    else  aJet.setL2L3resJEC(1.);
+    
+    aJet.setL3absJEC( aPatJet.correctedJet("L3Absolute").pt()/aPatJet.correctedJet("L2Relative").pt() );
+    if(!ispuppi){
+      aJet.setL2relJEC( aPatJet.correctedJet("L2Relative").pt()/aPatJet.correctedJet("L1FastJet").pt() );
+      aJet.setL1fastjetJEC( aPatJet.correctedJet("L1FastJet").pt()/aPatJet.correctedJet("Uncorrected").pt() );
+      //cout << aPatJet.correctedJet("Uncorrected").pt() << " " << aPatJet.correctedJet("Uncorrected").energy()  << " " << aPatJet.correctedJet("L3Absolute").pt()/aPatJet.correctedJet("L2Relative").pt() << " " << aPatJet.correctedJet("L1FastJet").pt()/aPatJet.correctedJet("Uncorrected").pt() << endl;
+    }
+
+
     // setting JEC uncertainty
     if (!payloadName_.empty()){
       jecUnc->setJetEta(aJet.eta());
@@ -233,6 +271,7 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       if (setGenParticle_) aJet.setGenParticleRef(aPatJet.genParticleRef());
 
       const double jetPt = aJet.pt();
+      aJet.setRho(rho);
 
       // Compute the JER
       JME::JetParameters jetPars = {{JME::Binning::JetPt, jetPt},

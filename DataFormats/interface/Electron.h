@@ -34,6 +34,9 @@ namespace cat {
       else return relIso04_;
     }
     
+    float mva() const {return mva_;}
+    float zzmva() const {return zzmva_;}
+
     float scEta() const { return scEta_; }
     bool passConversionVeto() const { return passConversionVeto_; }
     bool isGsfCtfScPixChargeConsistent() const{ return isGsfCtfScPixChargeConsistent_; }
@@ -72,6 +75,9 @@ namespace cat {
 
     float scaleFactor(const std::string& name, int sign = 0) const;
     
+    void setMVA(float f){ mva_=f;}
+    void setZZMVA(float f){ zzmva_=f;}
+
   private:
 
     std::vector<pat::Electron::IdPair> electronIDs_;
@@ -87,6 +93,8 @@ namespace cat {
     
     int snuID_;
     bool isTrigMVAValid_;
+    float mva_;
+    float zzmva_;
   };
 }
 
