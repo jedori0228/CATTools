@@ -1371,7 +1371,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     jets_L2relJEC.push_back(jt.L2relJEC());
     jets_L1fastjetJEC.push_back(jt.L1fastjetJEC());
     jets_Rho.push_back(jt.Rho());
-    if(event.isRealData())jets_JetArea.push_back(jt.JetArea());
+    jets_JetArea.push_back(jt.JetArea());
 
   }
   
@@ -1429,7 +1429,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     fatjets_L2relJEC.push_back(jt.L2relJEC());
     fatjets_L1fastjetJEC.push_back(jt.L1fastjetJEC());
     fatjets_Rho.push_back(jt.Rho());
-    if(event.isRealData())fatjets_JetArea.push_back(jt.JetArea());
+    fatjets_JetArea.push_back(jt.JetArea());
 
 
 
