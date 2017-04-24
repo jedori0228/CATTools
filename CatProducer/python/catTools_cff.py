@@ -72,6 +72,23 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
         
         process.load("PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff")
 
+        from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+        if runOnMC:
+            updateJetCollection(
+                process,
+                jetSource = cms.InputTag('slimmedJets'),
+                jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+                )
+
+        else :
+            updateJetCollection(
+                process,
+                jetSource = cms.InputTag('slimmedJets'),
+                jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']), 'None'),
+                )
+            
+
+
         process.patJetCorrFactors.primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
         process.catJets.src = cms.InputTag("updatedPatJets")
         ### updating puppi jet jec
@@ -95,23 +112,6 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
         #process.patJetsUpdated.userData.userFloats.src +=['pileupJetIdUpdated:fullDiscriminant']
 
 
-        from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
-        if runOnMC:
-            updateJetCollection(
-                process,
-                jetSource = cms.InputTag('slimmedJets'),
-                jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
-                )
-            
-        else :
-            updateJetCollection(
-                process,
-                jetSource = cms.InputTag('slimmedJets'),
-                jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']), 'None'),
-                )
-            
-            
-        #src = cms.InputTag('slimmedJetsAK8'),
 
 
         process.catJetsPuppi.src = cms.InputTag("patJetsPuppiUpdated")

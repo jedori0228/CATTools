@@ -194,7 +194,7 @@ void cat::CATFatJetProducer::produce(edm::Event & iEvent, const edm::EventSetup 
     if(!ispuppi){
       aJet.setL2relJEC( aPatJet.correctedJet("L2Relative").pt()/aPatJet.correctedJet("L1FastJet").pt() );
       aJet.setL1fastjetJEC( aPatJet.correctedJet("L1FastJet").pt()/aPatJet.correctedJet("Uncorrected").pt() );
-      cout << aJet.pt()<< " " <<  aPatJet.correctedJet("Uncorrected").pt() <<  " " <<  aPatJet.correctedJet("L1FastJet").pt() << " " << aPatJet.correctedJet("L2Relative").pt()  << " " << aPatJet.correctedJet("L3Absolute").pt() << " " << aJet.pt() /  aPatJet.correctedJet("L3Absolute").pt() << " " << endl;
+      //cout << aJet.pt()<< " " <<  aPatJet.correctedJet("Uncorrected").pt() <<  " " <<  aPatJet.correctedJet("L1FastJet").pt() << " " << aPatJet.correctedJet("L2Relative").pt()  << " " << aPatJet.correctedJet("L3Absolute").pt() << " " << aJet.pt() /  aPatJet.correctedJet("L3Absolute").pt() << " " << endl;
       if(iEvent.isRealData())aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());
       else aJet.setL2L3resJEC(1.);
     }
