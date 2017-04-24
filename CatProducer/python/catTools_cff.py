@@ -109,7 +109,9 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
                 jetSource = cms.InputTag('slimmedJets'),
                 jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']), 'None'),
                 )
-
+            
+            
+        #src = cms.InputTag('slimmedJetsAK8'),
 
 
         process.catJetsPuppi.src = cms.InputTag("patJetsPuppiUpdated")

@@ -240,10 +240,6 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     /// Set variables for SNU
     aJet.setRawPt(aPatJet.correctedJet("Uncorrected").pt() );
     aJet.setRawE(aPatJet.correctedJet("Uncorrected").energy() );
-    if(iEvent.isRealData()){
-      //aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());
-    }
-    else  aJet.setL2L3resJEC(1.);
     
     aJet.setL3absJEC( aPatJet.correctedJet("L3Absolute").pt()/aPatJet.correctedJet("L2Relative").pt() );
     if(!ispuppi){
@@ -312,6 +308,9 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   if (jecUnc) delete jecUnc;
 
   iEvent.put(out);
+
+
+  
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
