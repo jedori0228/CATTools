@@ -1,7 +1,8 @@
 import os,sys
 
 datasetname = [ 
-    ["TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8" , "170423_160142"]
+    ["TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8" , "170423_160142"],
+    ["DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",""]
     ]
 
 catversion="v8-0-7"
@@ -10,6 +11,9 @@ newfilename=""
 user=os.getenv("USER")
 
 os.system("bash /cvmfs/cms.cern.ch/crab3/crab.sh ")
+
+listtag='Add to Setup.py : mcsampledir = ['
+
 
 
 for m in range(0, len(datasetname)):
@@ -43,6 +47,15 @@ for m in range(0, len(datasetname)):
             
             if not os.path.exists(oldfile):
                 sys.exit()
+
+            subname= oldfile.replace(".txt","")
+            subname = subname.replace("/cms/scratch/SNU/datasets_v8-0-6/dataset_","")
+
+            if m == 0:
+                listtag+='"'+subname+'"'
+            else:
+                listtag+=',"'+subname+'"'
+                               
 
             readoldfile = open(oldfile,"r")
             newfilename = oldfile.replace(readfromcatversion,catversion)
@@ -114,8 +127,8 @@ for m in range(0, len(datasetname)):
         readlog2.close()
 
         os.system("rm log2.txt")
-        os.system("chmod 777 " + newfilename)
 
+    
     listfile = open(newfilename,"w")
     for coline in fornewfile:
         if "path " in coline:
@@ -125,8 +138,13 @@ for m in range(0, len(datasetname)):
     for fileline in filelist:
         listfile.write(fileline)
     listfile.close()
+    os.system("chmod 777 " + newfilename)
     os.system("rm log1.txt")
 
     print "--"*50
     print "File --> " + newfilename
     print "--"*50
+
+print "--"*50
+print "--"*50
+print listtag+"]"
