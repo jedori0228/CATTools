@@ -377,6 +377,8 @@ cat::CATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
              dr03TkSumPt < 0.18*pt ) isTrigMVAValid = true;
       }
     }
+
+    aElectron.setNMissingHit(aPatElectron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
     aElectron.setTrigMVAValid(isTrigMVAValid);
 
     out->push_back(aElectron);

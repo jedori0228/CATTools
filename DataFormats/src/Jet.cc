@@ -33,7 +33,8 @@ Jet::Jet(const reco::LeafCandidate & aJet) :
   l3fabs_(0.),
   l2rel_(0.),
   l1fast_(0.),
-  rho_(-999.)
+  rho_(-999.),
+  area_(-999.)
 
 {}
 

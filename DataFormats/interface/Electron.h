@@ -28,7 +28,9 @@ namespace cat {
     bool isVeto() const {return electronID("veto");}
     bool isMediumMVA() const {return electronID("wp90");}
     bool isTightMVA() const {return electronID("wp80");}
-
+    
+    int MissingHits() const{return nhitsmiss_;}
+    
     float relIso(float dR=0.3) const {
       if( dR < 0.35) return relIso03_;
       else return relIso04_;
@@ -52,6 +54,7 @@ namespace cat {
     int snuID() const {return snuID_;}
     bool isTrigMVAValid() const { return isTrigMVAValid_; }
     
+    void setNMissingHit(int i) {nhitsmiss_=i;}
     void setElectronIDs(const std::vector<pat::Electron::IdPair> & ids) { electronIDs_ = ids; }
     void setElectronID(pat::Electron::IdPair ids) { electronIDs_.push_back(ids); }
 
@@ -92,6 +95,7 @@ namespace cat {
     bool isEB_;
     
     int snuID_;
+    int nhitsmiss_;
     bool isTrigMVAValid_;
     float mva_;
     float zzmva_;

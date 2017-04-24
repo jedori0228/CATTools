@@ -39,7 +39,7 @@ for d in datasets:
     #if len(d['path']) != 0: continue
 
     runOnMC = (d['type'] != 'Data')
-
+    
     ## Options for this sample
     opts = {"useMiniAOD":"True"}
     if runOnMC:
@@ -97,6 +97,7 @@ def initConfig(runOnMC):
 ## Start job submission
 #from CRABAPI.RawCommand import crabCommand
 
+print "submit  data"
 ## Submit real data jobs
 import time
 from tempfile import mkstemp

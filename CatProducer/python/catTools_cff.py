@@ -68,9 +68,10 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
 
 #process.options.allowUnscheduled = cms.untracked.bool(True)
 
-        #######################################################################
-        ## applying new jec on the fly
+
+        
         process.load("PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff")
+
         process.patJetCorrFactors.primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
         process.catJets.src = cms.InputTag("updatedPatJets")
         ### updating puppi jet jec
@@ -92,6 +93,24 @@ def catTool(process, runOnMC=True, useMiniAOD=True):
           vertexes=cms.InputTag("offlineSlimmedPrimaryVertices")
         )
         #process.patJetsUpdated.userData.userFloats.src +=['pileupJetIdUpdated:fullDiscriminant']
+
+
+        from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+        if runOnMC:
+            updateJetCollection(
+                process,
+                jetSource = cms.InputTag('slimmedJets'),
+                jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+                )
+            
+        else :
+            updateJetCollection(
+                process,
+                jetSource = cms.InputTag('slimmedJets'),
+                jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual']), 'None'),
+                )
+
+
 
         process.catJetsPuppi.src = cms.InputTag("patJetsPuppiUpdated")
         process.catJetsPuppi.setGenParticle = cms.bool(False)

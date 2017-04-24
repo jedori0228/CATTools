@@ -241,7 +241,7 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     aJet.setRawPt(aPatJet.correctedJet("Uncorrected").pt() );
     aJet.setRawE(aPatJet.correctedJet("Uncorrected").energy() );
     if(iEvent.isRealData()){
-      aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());
+      //aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());
     }
     else  aJet.setL2L3resJEC(1.);
     
@@ -249,9 +249,10 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     if(!ispuppi){
       aJet.setL2relJEC( aPatJet.correctedJet("L2Relative").pt()/aPatJet.correctedJet("L1FastJet").pt() );
       aJet.setL1fastjetJEC( aPatJet.correctedJet("L1FastJet").pt()/aPatJet.correctedJet("Uncorrected").pt() );
-      //cout << aPatJet.correctedJet("Uncorrected").pt() << " " << aPatJet.correctedJet("Uncorrected").energy()  << " " << aPatJet.correctedJet("L3Absolute").pt()/aPatJet.correctedJet("L2Relative").pt() << " " << aPatJet.correctedJet("L1FastJet").pt()/aPatJet.correctedJet("Uncorrected").pt() << endl;
+      //cout << aJet.pt()<< " " <<  aPatJet.correctedJet("Uncorrected").pt() <<  " " <<  aPatJet.correctedJet("L1FastJet").pt() << " " << aPatJet.correctedJet("L2Relative").pt()  << " " << aPatJet.correctedJet("L3Absolute").pt() << " " << aJet.pt() /  aPatJet.correctedJet("L3Absolute").pt() << " " << endl;
+      if(iEvent.isRealData())aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());   
+      else aJet.setL2L3resJEC(1.);
     }
-
 
     // setting JEC uncertainty
     if (!payloadName_.empty()){
@@ -272,7 +273,7 @@ void cat::CATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
       const double jetPt = aJet.pt();
       aJet.setRho(rho);
-
+      aJet.setJetArea(aPatJet.jetArea());
       // Compute the JER
       JME::JetParameters jetPars = {{JME::Binning::JetPt, jetPt},
                                     {JME::Binning::JetEta, aJet.eta()},
