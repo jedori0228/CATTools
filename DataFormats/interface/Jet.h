@@ -114,6 +114,7 @@ namespace cat {
     float L2relJEC() const { return l2rel_ ;}
     float L1fastjetJEC() const { return l1fast_ ;}
     float Rho() const { return rho_ ;}
+    float JetArea() const { return area_ ;}
     
     
     void setLooseJetID(bool id) { looseJetID_ = id; }
@@ -154,6 +155,7 @@ namespace cat {
     void setL2relJEC(float f) {l2rel_ = f;}
     void setL1fastjetJEC(float f) {l1fast_ = f;}
     void setRho(float f) {rho_ = f;}
+    void setJetArea(float f) {area_ = f;}
 
   private:
 
@@ -188,7 +190,7 @@ namespace cat {
     float qgLikelihood_;
 
     float rawpt_, rawe_, l2l3res_,l3fabs_, l2rel_, l1fast_;
-    float rho_;
+    float rho_, area_;
   };
 }
 

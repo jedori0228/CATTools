@@ -36,10 +36,11 @@ for d in datasets:
     pdName, sdName = dataset.split('/')[1], dataset.split('/')[2]
     if os.path.exists('crab_%s_%s' % (reqName, pdName)): continue
     elif os.path.exists('crab_%s_%s_%s' % (reqName, pdName, sdName)): continue
+    
     if len(d['path']) != 0: continue
 
     runOnMC = (d['type'] != 'Data')
-
+    
     ## Options for this sample
     opts = {"useMiniAOD":"True"}
     if runOnMC:
@@ -63,6 +64,7 @@ for d in datasets:
     else: queuesMC.append((d['name'], dataset, opts))
 
 ## Now job configuration is almost ready. Use CrabAPI to configure jobs
+from CRABClient.UserUtilities import  getUsernameFromSiteDB
 from WMCore.Configuration import Configuration
 def initConfig(runOnMC):
     config = Configuration()
@@ -96,6 +98,7 @@ def initConfig(runOnMC):
 ## Start job submission
 #from CRABAPI.RawCommand import crabCommand
 
+print "submit  data"
 ## Submit real data jobs
 import time
 from tempfile import mkstemp

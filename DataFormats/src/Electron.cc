@@ -17,6 +17,7 @@ Electron::Electron(const reco::LeafCandidate & aElectron) :
   isGsfCtfScPixChargeConsistent_(false),
   isEB_(false),
   snuID_(0),
+  nhitsmiss_(-1),
   isTrigMVAValid_(false),
   mva_(-999.),
   zzmva_(-999.)

@@ -361,7 +361,7 @@ private:
   std::vector<double> muon_roch_pt, muon_roch_eta,muon_roch_phi, muon_roch_m, muon_roch_energy;
 
   //// electrons  26
-  std::vector<double>   electrons_x,electrons_y,electrons_z, electrons_relIso03,electrons_relIso04, electrons_minirelIso, electrons_shiftedEnDown, electrons_shiftedEnUp, electrons_absIso03, electrons_absIso04,electrons_chIso03, electrons_nhIso03, electrons_phIso03, electrons_puChIso03, electrons_chIso04, electrons_nhIso04, electrons_phIso04, electrons_puChIso04, electrons_scEta, electrons_dxy,electrons_sigdxy, electrons_dz, electrons_isGsfCtfScPixChargeConsistent;
+  std::vector<double>   electrons_x,electrons_y,electrons_z, electrons_relIso03,electrons_relIso04, electrons_minirelIso, electrons_shiftedEnDown, electrons_shiftedEnUp, electrons_absIso03, electrons_absIso04,electrons_chIso03, electrons_nhIso03, electrons_phIso03, electrons_puChIso03, electrons_chIso04, electrons_nhIso04, electrons_phIso04, electrons_puChIso04, electrons_scEta, electrons_dxy,electrons_sigdxy, electrons_dz, electrons_isGsfCtfScPixChargeConsistent, electrons_mva, electrons_zzmva;
   
   std::vector<double> electrons_pt, electrons_eta,electrons_phi, electrons_m, electrons_energy;
 
@@ -373,6 +373,8 @@ private:
   std::vector<double> fatjets_pt, fatjets_eta,fatjets_phi, fatjets_m, fatjets_energy;
   std::vector<double> fatjets_puppi_pt, fatjets_puppi_eta,fatjets_puppi_phi, fatjets_puppi_m;
   std::vector<double> fatjets_puppi_tau1, fatjets_puppi_tau2,fatjets_puppi_tau3;;
+  std::vector<double> jets_L2L3resJEC,jets_L3absJEC,jets_L2relJEC, jets_L1fastjetJEC,jets_Rho,jets_JetArea;
+  std::vector<double> fatjets_L2L3resJEC,fatjets_L3absJEC,fatjets_L2relJEC, fatjets_L1fastjetJEC,fatjets_Rho,fatjets_JetArea;
 
   bool Flag_HBHENoiseIsoFilter, Flag_HBHENoiseFilter, Flag_CSCTightHaloFilter, Flag_goodVertices, Flag_eeBadScFilter, Flag_EcalDeadCellTriggerPrimitiveFilter,  Flag_globalTightHalo2016Filter;
 
@@ -712,6 +714,10 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
   tree_->Branch("electrons_sigdxy",  "std::vector<double>", &electrons_sigdxy);
   tree_->Branch("electrons_dz",  "std::vector<double>", &electrons_dz);
   tree_->Branch("electrons_isGsfCtfScPixChargeConsistent",  "std::vector<double>", &electrons_isGsfCtfScPixChargeConsistent);
+  tree_->Branch("electrons_mva",  "std::vector<double>", &electrons_mva);
+  tree_->Branch("electrons_zzmva",  "std::vector<double>", &electrons_zzmva);
+
+
   tree_->Branch("electrons_puChIso03",  "std::vector<double>", &electrons_puChIso03);
   tree_->Branch("electrons_puChIso04",  "std::vector<double>", &electrons_puChIso04);
 
@@ -737,6 +743,13 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
   tree_->Branch("jets_smearedResDown",  "std::vector<double>", &jets_smearedResDown);
   tree_->Branch("jets_smearedResUp",  "std::vector<double>", &jets_smearedResUp);
   tree_->Branch("jets_PileupJetId",  "std::vector<double>", &jets_PileupJetId);
+  
+  tree_->Branch("jets_L2L3resJEC", "std::vector<double>", &jets_L2L3resJEC);
+  tree_->Branch("jets_L3absJEC", "std::vector<double>", &jets_L3absJEC);
+  tree_->Branch("jets_L2relJEC", "std::vector<double>", &jets_L2relJEC);
+  tree_->Branch("jets_L1fastjetJEC", "std::vector<double>", &jets_L1fastjetJEC);
+  tree_->Branch("jets_Rho", "std::vector<double>", &jets_Rho);
+  tree_->Branch("jets_JetArea", "std::vector<double>", &jets_JetArea);
 
 
   tree_->Branch("fatjets_pt",  "std::vector<double>", &fatjets_pt);
@@ -761,6 +774,15 @@ GenericNtupleMakerSNU::GenericNtupleMakerSNU(const edm::ParameterSet& pset)
   tree_->Branch("fatjets_smearedResUp",  "std::vector<double>", &fatjets_smearedResUp);
   tree_->Branch("fatjets_PileupJetId",  "std::vector<double>", &fatjets_PileupJetId);
   
+  tree_->Branch("fatjets_L2L3resJEC", "std::vector<double>", &fatjets_L2L3resJEC);
+  tree_->Branch("fatjets_L3absJEC", "std::vector<double>", &fatjets_L3absJEC);
+  tree_->Branch("fatjets_L2relJEC", "std::vector<double>", &fatjets_L2relJEC);
+  tree_->Branch("fatjets_L1fastjetJEC", "std::vector<double>", &fatjets_L1fastjetJEC);
+  tree_->Branch("fatjets_Rho", "std::vector<double>", &fatjets_Rho);
+  tree_->Branch("fatjets_JetArea", "std::vector<double>", &fatjets_JetArea);
+
+
+
   tree_->Branch("fatjets_tau1",  "std::vector<double>", &fatjets_tau1);
   tree_->Branch("fatjets_tau2",  "std::vector<double>", &fatjets_tau2);
   tree_->Branch("fatjets_tau3",  "std::vector<double>", &fatjets_tau3);
@@ -1106,6 +1128,7 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   vtrignames_tomatch_muon.push_back("HLT_Mu20_v");
   vtrignames_tomatch_muon.push_back("HLT_TkMu20_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu8_v");
+  vtrignames_tomatch_muon.push_back("HLT_Mu3_");
   vtrignames_tomatch_muon.push_back("HLT_Mu17_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu24_v");
   vtrignames_tomatch_muon.push_back("HLT_Mu8_TrkIsoVVL_v");
@@ -1177,11 +1200,11 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   event.getByToken(fatjetToken_, fatjets);
 
 
-  double el_pt_min= 9.;
+  double el_pt_min= 5.;
   double el_eta_max= 3.;
-  double mu_pt_min= 9.;
+  double mu_pt_min= 5.;
   double mu_eta_max= 3.;
-  double j_pt_min= 15.;
+  double j_pt_min= 10.;
   double j_eta_max= 5.;
   if(!makeSlim){
     el_pt_min= 0.;
@@ -1244,6 +1267,8 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     electrons_dxy.push_back(el.dxy()); 
     electrons_sigdxy.push_back(el.ipsignificance());
     electrons_dz.push_back(el.dz());
+    electrons_mva.push_back(el.mva());
+    electrons_zzmva.push_back(el.zzmva());
     electrons_isGsfCtfScPixChargeConsistent.push_back(el.isGsfCtfScPixChargeConsistent());
     
   }
@@ -1341,6 +1366,12 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     jets_smearedResUp.push_back(jt.smearedResUp()); 
     jets_PileupJetId.push_back(jt.pileupJetId()); 
 
+    jets_L2L3resJEC.push_back(jt.L2L3resJEC());
+    jets_L3absJEC.push_back(jt.L3absJEC());
+    jets_L2relJEC.push_back(jt.L2relJEC());
+    jets_L1fastjetJEC.push_back(jt.L1fastjetJEC());
+    jets_Rho.push_back(jt.Rho());
+    if(event.isRealData())jets_JetArea.push_back(jt.JetArea());
 
   }
   
@@ -1393,6 +1424,13 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
     fatjets_puppi_tau1.push_back(jt.puppi_tau1());
     fatjets_puppi_tau2.push_back(jt.puppi_tau2());
     fatjets_puppi_tau3.push_back(jt.puppi_tau3());
+    fatjets_L2L3resJEC.push_back(jt.L2L3resJEC());
+    fatjets_L3absJEC.push_back(jt.L3absJEC());
+    fatjets_L2relJEC.push_back(jt.L2relJEC());
+    fatjets_L1fastjetJEC.push_back(jt.L1fastjetJEC());
+    fatjets_Rho.push_back(jt.Rho());
+    if(event.isRealData())fatjets_JetArea.push_back(jt.JetArea());
+
 
 
   }
@@ -1984,6 +2022,8 @@ void GenericNtupleMakerSNU::analyze(const edm::Event& event, const edm::EventSet
   electrons_dxy.clear();
   electrons_sigdxy.clear();
   electrons_dz.clear();
+  electrons_mva.clear();
+  electrons_zzmva.clear();
   electrons_isGsfCtfScPixChargeConsistent.clear();
 
   //delete rmcor;

@@ -41,9 +41,13 @@ namespace cat {
 
     void produce(edm::Event & iEvent, const edm::EventSetup & iSetup) override;
     void beginLuminosityBlock(const edm::LuminosityBlock& lumi, const edm::EventSetup&) override;
+    std::string upperCase(std::string input);
+
 
   private:
     edm::EDGetTokenT<pat::JetCollection> src_;
+    const edm::InputTag   inputTag;
+
     edm::EDGetTokenT<double> rhoToken_;
 
     const std::vector<std::string> btagNames_;
@@ -53,6 +57,7 @@ namespace cat {
     bool runOnMC_;
     //PFJetIDSelectionFunctor pfjetIDFunctor;
     JetCorrectionUncertainty *jecUnc;
+    bool ispuppi;
 
     CLHEP::HepRandomEngine* rng_;
   };
@@ -61,6 +66,7 @@ namespace cat {
 
 cat::CATFatJetProducer::CATFatJetProducer(const edm::ParameterSet & iConfig) :
   src_(consumes<pat::JetCollection>(iConfig.getParameter<edm::InputTag>("src"))),
+  inputTag (iConfig.getParameter<edm::InputTag>("src")),// to find if puppi                                                                                                                                                                                  
   rhoToken_(consumes<double>(iConfig.getParameter<edm::InputTag>("rho"))),
   btagNames_(iConfig.getParameter<std::vector<std::string> >("btagNames")),
   payloadName_(iConfig.getParameter<std::string>("payloadName")),
@@ -70,7 +76,20 @@ cat::CATFatJetProducer::CATFatJetProducer(const edm::ParameterSet & iConfig) :
 {
   produces<std::vector<cat::FatJet> >();
   ///  pfjetIDFunctor = PFJetIDSelectionFunctor(PFJetIDSelectionFunctor::FIRSTDATA,PFJetIDSelectionFunctor::LOOSE);
+
+  if(upperCase(inputTag.label()).find(upperCase("PUPPI")) != std::string::npos)ispuppi=true;
+  else ispuppi=false;
+
 }
+std::string cat::CATFatJetProducer::upperCase(std::string input)
+{
+  for (std::string::iterator it = input.begin(); it != input.end(); ++ it)
+    *it = toupper(*it);
+  return input;
+}
+
+
+
 
 void cat::CATFatJetProducer::beginLuminosityBlock(const edm::LuminosityBlock& lumi, const edm::EventSetup&)
 {
@@ -164,6 +183,19 @@ void cat::CATFatJetProducer::produce(edm::Event & iEvent, const edm::EventSetup 
     aJet.setPartonFlavour(aPatJet.partonFlavour());
     int partonPdgId = aPatJet.genParton() ? aPatJet.genParton()->pdgId() : 0;
     aJet.setPartonPdgId(partonPdgId);
+
+    /// Set variables for SNU                                                                                                                                                                                                                                                
+    aJet.setRawPt(aPatJet.correctedJet("Uncorrected").pt() );
+    aJet.setRawE(aPatJet.correctedJet("Uncorrected").energy() );
+    aJet.setL3absJEC( aPatJet.correctedJet("L3Absolute").pt()/aPatJet.correctedJet("L2Relative").pt() );
+
+    if(!ispuppi){
+      aJet.setL2relJEC( aPatJet.correctedJet("L2Relative").pt()/aPatJet.correctedJet("L1FastJet").pt() );
+      aJet.setL1fastjetJEC( aPatJet.correctedJet("L1FastJet").pt()/aPatJet.correctedJet("Uncorrected").pt() );
+      if(iEvent.isRealData())aJet.setL2L3resJEC(aPatJet.correctedJet("L2L3Residual").pt()/aPatJet.correctedJet("L3Absolute").pt());
+      else aJet.setL2L3resJEC(1.);
+    }
+
 
     // setting JEC uncertainty
     if (!payloadName_.empty()){
