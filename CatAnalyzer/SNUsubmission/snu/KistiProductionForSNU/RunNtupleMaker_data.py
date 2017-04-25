@@ -313,13 +313,11 @@ samples_processed=0
 dataset_tag=""
 for i in sampledir:
     
-    runtrig=False
-    if "DoubleEG" in i:
-        runtrig=True
+    runtrig=True
+    if "MuonEG" in i:
+        runtrig=False
         #runtrig true means more triggers are available in catuples              
 
-    if "SingleEl" in i:
-        runtrig=True
     
     for period in periods:
         print "period = " + period
