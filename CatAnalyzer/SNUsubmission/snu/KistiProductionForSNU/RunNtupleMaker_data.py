@@ -122,7 +122,7 @@ def CheckJobStatus(submitted_list, v):
             print "Quiting script cos a job failed"
             failedlist = open("faileddatasettmp_" + i + "_Run2016"+ period + ".txt", "w")
             for x in failed_jobs:
-                failedlist.write(x+"\n")
+                failedlist.write(str(x)+"\n")
             failedlist.close()
                            
 
@@ -293,16 +293,15 @@ if connected_cms3 == False:
 
 ## Make a list of samples to process
 
-sampledir = ["DoubleMuon" , "MuonEG", "DoubleEG", "SingleElectron", "SingleMuon"]
-sampledir = ["DoubleEG", "MuonEG", "SingleElectron"]
-sampledir = ["SingleMuon"]
+sampledir = ["MuonEG", "DoubleEG", "SingleElectron", "SingleMuon"]
 
 periods = ["B", "C", "D","E","F","G","H_v2","H_v3"]
 
 if not ALLSamples == True:
     sampledir = datasampledir
 
-sampledir = ["SingleMuon"]
+sampledir = ["MuonEG", "DoubleEG", "SingleElectron", "SingleMuon"]
+
 
 # njob set to 40: if n root files < 40 njobs = #rootfiles
 njob=100

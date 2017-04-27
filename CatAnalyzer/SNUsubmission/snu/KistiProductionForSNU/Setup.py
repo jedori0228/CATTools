@@ -23,7 +23,7 @@ copy_cms1=True
 KeepWorkDir=False
 
 #### WHAT VERSION OF CATUPLES ARE YOU RUNNING 
-version = "v8-0-6"
+version = "v8-0-7"
 
 
 #### For data only:
@@ -34,8 +34,10 @@ datasampledir = ["DoubleMuon"]
 
                 
 #### For MC only
-mcsampledir = ["WZG","WWG","ttZToLL_M-10","ggHtoWW","vbfHtoWW","qcd_15to20_bctoe","qcd_20to30_bctoe","qcd_30to80_bctoe" ,"qcd_80to170_bctoe","qcd_170to250_bctoe","qcd_250toinf_bctoe","ww_ds"] 
-mcsampledir = [ "ggHtoZZ","TG","TTG","tZq","vbhHtoZZ", "ZZTo2L2Nu_Powheg","ZZTo2L2Q_Powheg","ggZZto2e2mu","ggZZto2e2nu","ggZZto2e2tau","ggZZto2mu2nu","ggZZto2mu2tau","ggZZto4e","ggZZto4mu","ggZZto4tau","ggWWto2L2Nu","WZto2L2Q_amcatnlo","QCD_DoubleEMEnriched_30-40_mgg80toinf","QCD_DoubleEMEnriched_30-inf_mgg40to80","QCD_DoubleEMEnriched_40-inf_mgg80toinf" ,"DYtoEE"]
+#mcsampledir = ["DYJets_10to50","DYJets_MG","DYJets_MG_10to50","WJets","WJets_MG","TT_powheg","TT_powheg_UEup","TT_powheg_UEdown","TT_powheg_FSRup","TT_powheg_FSRdown","TT_powheg_ISRup","TT_powheg_ISRdown","TTJets_aMC","TTLL_powheg","TTLJ_powheg","TT_powheg_mtop1665","TT_powheg_mtop1695","TT_powheg_mtop1715","TT_powheg_mtop1735","TT_powheg_mtop1755","TT_powheg_mtop1785","TT_powheg_evtgen","TT_powheg_herwig",
+
+#mcsampledir = ["DYJets", "DYJets_10to50","DYJets_MG","DYJets_MG_10to50","WJets","WJets_MG","TT_powheg", "SingleTop_s","SingleTop_t","SingleTbar_t","SingleTop_tW","SingleTbar_tW","SingleTop_tW_noHadron","SingleTbar_tW_noHadron","WW","WZ","ZZ","ZZTo4L_powheg","WWTo2L2Nu","WWToLNuQQ","WZTo3LNu_powheg"
+mcsampledir=["WZTo3LNu_amcatnlo","WpWpQCD","WpWpEWK","WWW","WWZ","WZZ","ZZZ","ttW","ttZ","ttZToLL_M-1to10","ttWToLNu","ttZToLL_M-10","WGtoLNuG","WgstarToLNuEE","WgstarToLNuMuMu","ZGto2LG","ttH_bb","ttH_nonbb","GG_HToMuMu","VBF_HToMuMu", "QCD_Pt-15to20_MuEnriched","QCD_Pt-20to30_MuEnriched","QCD_Pt-30to50_MuEnriched","QCD_Pt-50to80_MuEnriched","QCD_Pt-80to120_MuEnriched","QCD_Pt-120to170_MuEnriched","QCD_Pt-170to300_MuEnriched","QCD_Pt-300to470_MuEnriched","QCD_Pt-470to600_MuEnriched","QCD_Pt-600to800_MuEnriched","QCD_Pt-800to1000_MuEnriched","QCD_Pt-1000toInf_MuEnriched","QCD_Pt-20to30_EMEnriched","QCD_Pt-30to50_EMEnriched","QCD_Pt-50to80_EMEnriched","QCD_Pt-80to120_EMEnriched","QCD_Pt-120to170_EMEnriched","QCD_Pt-170to300_EMEnriched","QCD_Pt-300toInf_EMEnriched","DYtoEE","WZG","WWG","ttZToLL_M-10","ggHtoWW","vbfHtoWW","qcd_15to20_bctoe","qcd_20to30_bctoe","qcd_30to80_bctoe","qcd_80to170_bctoe","qcd_170to250_bctoe","qcd_250toinf_bctoe","ww_ds","ggHtoZZ","TG","TTG","tZq","vbhHtoZZ","ZZTo2L2Nu_Powheg","ZZTo2L2Q_Powheg","ggZZto2e2mu","ggZZto2e2nu","ggZZto2e2tau","ggZZto2mu2nu","ggZZto2mu2tau","ggZZto4e","ggZZto4mu","ggZZto4tau","ggWWto2L2Nu","WZto2L2Q_amcatnlo","QCD_DoubleEMEnriched_30-40_mgg80toinf","QCD_DoubleEMEnriched_30-inf_mgg40to80","QCD_DoubleEMEnriched_40-inf_mgg80toinf","ZZTo4L_amcatnlo"]
 
 
 
@@ -105,7 +107,7 @@ username_snu=os.getenv("USER")
 ##########################################
 host=os.getenv("HOSTNAME")
 k_user=os.getenv("USER") 
-latest_version="v8-0-6"
+latest_version="v8-0-7"
 
 if version != latest_version:
     update = raw_input("You requested to run on old version of catuples. " + latest_version + " is the latest version while you are running on " + version + ". To continue type Y")
