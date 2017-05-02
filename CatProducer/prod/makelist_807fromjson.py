@@ -80,8 +80,9 @@ for m in range(0, len(datasetname)):
             newfilename = oldfile.replace(readfromcatversion,catversion)
             for ro in readoldfile:
                 if not ".root" in ro:
-                    fornewfile.append(ro)
-                    print (ro.split())
+                    if not "failed" in ro:
+                        fornewfile.append(ro)
+                        print (ro.split())
         readlist.close()
 
 
@@ -104,12 +105,20 @@ for m in range(0, len(datasetname)):
     readlog1 = open("log1.txt","r")
     MiniAODCampaign=""
     for line in readlog1:
+        if not "v8-0-7" in line :
+            continue
         if "bestman" in line:
             sline = line.split()
             if len(sline) == 9:
                 MiniAODCampaign=sline[8]
+                if "v8-0-7" in MiniAODCampaign:
+                    break
     readlog1.close()
     print "MiniAODCampaign = " + MiniAODCampaign
+    
+    if not "v8-0-7" in MiniAODCampaign:
+        print "Error in MiniAODCampaign" 
+        quit()
     
     if prodtag == "":
          os.system("ls -lth  /xrootd/store/user/"+user_sample+"/"+pdataset + "/"+MiniAODCampaign + "/ >  log1b.txt")  
