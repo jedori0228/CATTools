@@ -65,13 +65,19 @@ GenWeightsToFlatWeights::GenWeightsToFlatWeights(const edm::ParameterSet& pset):
 
 void GenWeightsToFlatWeights::beginRun(const edm::Run& run, const edm::EventSetup&)
 {
+  cout << "[jskim] GenWeightsToFlatWeights::beginRun" << endl;
   edm::Handle<cat::GenWeightInfo> srcHandle;
   if ( !run.getByLabel(srcLabel_, srcHandle) ) return;
 
+  cout << "[jskim] srcHandle exist" << endl;
+  cout << "[jskim] srcHandle->nGroups() = " << srcHandle->nGroups() << endl;
   for ( int i=0, n=srcHandle->nGroups(); i<n; ++i ) {
     const auto& keys = srcHandle->keys(i);
 
     string name = srcHandle->name(i);
+
+    cout << "[jskim] name = " << name << endl;
+
     std::transform(name.begin(), name.end(), name.begin(), ::toupper);
     if ( name.find("SCALE") != string::npos ) {
       if ( !key_sup_.empty() and !key_sdn_.empty() ) {
@@ -172,6 +178,16 @@ public:
   void beginRunProduce(edm::Run& run, const edm::EventSetup&) override;
   void produce(edm::Event& event, const edm::EventSetup& eventSetup) override;
 
+  void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    if(from.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+  }
+
   typedef std::vector<float> vfloat;
   typedef std::vector<std::string> vstring;
   typedef std::vector<unsigned short> vushort;
@@ -244,10 +260,20 @@ void GenWeightsProducer::beginRunProduce(edm::Run& run, const edm::EventSetup&)
     contents.reserve(10000); // ~50 char per line, >100 weights
     for ( string line : weightHeader->lines() )
     {
+      //cout << "[jskim] " << line << endl;
+
+      replaceAll(line, "&lt;", "<");
+      replaceAll(line, "&gt;", ">");
+
       const auto s0 = line.find_first_of("<");
       const auto s1 = line.find_last_of(">");
+
+      //cout << s0 << "\t" << s1 << endl;
+
       if ( s0 == string::npos or s1 == string::npos ) continue;
-      line = line.substr(s0, s1-s0+1);
+      line = line.substr(s0, s1+3-s0+1);
+      //cout << "[jskim] " << line << endl;
+
       contents += line + "\n";
     }
     contents += "\n</lhe>\n"; // Close the root node
@@ -266,6 +292,9 @@ void GenWeightsProducer::beginRunProduce(edm::Run& run, const edm::EventSetup&)
       if ( !weightTypeObj ) continue;
 
       const string weightTypeStr = weightTypeObj->GetValue();
+
+cout << "[jskim] weightTypeStr = " << weightTypeStr << endl;
+
       vushort keys;
       vstring params;
       for ( TXMLNode* weightNode = grpNode->GetChildren(); weightNode != 0; weightNode = weightNode->GetNextNode() )
@@ -278,6 +307,7 @@ void GenWeightsProducer::beginRunProduce(edm::Run& run, const edm::EventSetup&)
 
       auto weightCombineByObj = (TXMLAttr*)grpNode->GetAttributes()->FindObject("combine");
       string combineBy = weightCombineByObj ? weightCombineByObj->GetValue() : "";
+
       out_genWeightInfo->addWeightGroup(weightTypeStr, combineBy, params, keys);
     }
 
